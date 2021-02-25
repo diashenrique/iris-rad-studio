@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!-- End Required meta tags -->
+    <!-- Begin SEO tag -->
+    <title>RAD | IRIS Rapid Application Development</title>
+    <meta property="og:title" content="RAD - IRIS Rapid Application Development" />
+    <meta name="author" content="Henrique Dias" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="description" content="Project & Task Management using InterSystems IRIS and Bootstrap 4" />
+    <meta property="og:description" content="Project & Task Management using InterSystems IRIS and Bootstrap 4" />
+    <link rel="canonical" href="https://github.com/diashenrique/" />
+    <meta property="og:url" content="https://github.com/diashenrique/" />
+    <meta property="og:site_name" content="RAD, IRIS Rapid Application Development" />
+    <script type="application/ld+json">
+        {
+            "name": "RAD - InterSystems IRIS RAD",
+            "description": "Rapid Application Development"
+        }
+    </script>
+    <!-- End SEO tag -->
+    <!-- FAVICONS -->
+    <link rel="apple-touch-icon" sizes="144x144" href="resources/img/forms2.svg" />
+    <link rel="shortcut icon" href="resources/img/forms2.svg" />
+    <meta name="theme-color" content="#3063A0" />
+    <!-- End FAVICONS -->
+    <!-- GOOGLE FONT -->
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans:400,500,600" rel="stylesheet" />
+    <!-- End GOOGLE FONT -->
+    <!-- BEGIN PLUGINS STYLES -->
+    <link rel="stylesheet"
+        href="resources/plugins/looper/assets/vendor/open-iconic/css/open-iconic-bootstrap.min.css" />
+    <link rel="stylesheet" href="resources/plugins/looper/assets/vendor/fontawesome/css/all.css" />
+    <!-- END PLUGINS STYLES -->
+    <!-- BEGIN THEME STYLES -->
+    <link rel="stylesheet" href="resources/plugins/looper/assets/stylesheets/theme.min.css" data-skin="default" />
+    <link rel="stylesheet" href="resources/plugins/looper/assets/stylesheets/theme-dark.min.css" data-skin="dark" />
+    <link rel="stylesheet" href="resources/plugins/looper/assets/stylesheets/custom.css" />
+    <!-- DevExtreme themes -->
+    <link rel="stylesheet" type="text/css" href="resources/plugins/extreme20.1.4/css/dx.common.css" />
+    <link rel="dx-theme" data-theme="generic.light" href="resources/plugins/extreme20.1.4/css/dx.light.css"
+        data-active="false" />
+    <link rel="dx-theme" data-theme="generic.dark" href="resources/plugins/extreme20.1.4/css/dx.generic.custom-dark.css"
+        data-active="false" />
+    <!-- Disable unused skin immediately -->
+    <script>
+        var skin = localStorage.getItem("skin") || "default";
+        var unusedLink = document.querySelector('link[data-skin]:not([data-skin="' + skin + '"])');
+        unusedLink.setAttribute("rel", "");
+        unusedLink.setAttribute("disabled", true);
+    </script>
+    <!-- END THEME STYLES -->
+</head>
+
+<body>
+    <!--[if lt IE 10]>
+    <div class="page-message" role="alert">You are using an <strong>outdated</strong> browser. Please <a class="alert-link" href="http://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</div>
+    <![endif]-->
+    <!-- .auth -->
+    <main class="auth">
+        <header id="auth-header" class="auth-header"
+            style="background-image: url(resources/plugins/looper/assets/images/illustration/img-1.png);">
+            <h1>
+                <img src="resources/img/IRISRADStudio.png" style="align-self: center;">
+            </h1>
+        </header><!-- form -->
+        <form id="loginForm" class="auth-form">
+            <!-- .form-group -->
+            <div class="form-group">
+                <div class="form-label-group">
+                    <input type="text" id="inputUser" class="form-control" placeholder="Username" autofocus=""> <label
+                        for="inputUser">Username</label>
+                </div>
+            </div><!-- /.form-group -->
+            <!-- .form-group -->
+            <div class="form-group">
+                <div class="form-label-group">
+                    <input type="password" id="inputPassword" class="form-control" placeholder="Password"> <label
+                        for="inputPassword">Password</label>
+                </div>
+            </div><!-- /.form-group -->
+            <!-- .form-group -->
+            <div class="form-group">
+                <button class="btn btn-lg btn-primary btn-block" type="submit" id="btnLogin">Sign In</button>
+            </div><!-- /.form-group -->
+            <!-- .form-group -->
+            <!-- <div class="form-group text-center">
+                <div class="custom-control custom-control-inline custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="remember-me"> <label
+                        class="custom-control-label" for="remember-me">Keep me sign in</label>
+                </div>
+            </div> -->
+            <!-- /.form-group -->
+            <!-- recovery links -->
+            <div class="text-center pt-3">
+                <a href="auth-recovery-password.html" class="link">Forgot Password?</a>
+            </div><!-- /recovery links -->
+        </form><!-- /.auth-form -->
+        <!-- copyright -->
+        <footer class="auth-footer"><i class="far fa-copyright"></i> 2020 All Rights Reserved.
+        </footer>
+    </main><!-- /.auth -->
+    <!-- BEGIN BASE JS -->
+    <script src="resources/plugins/looper/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="resources/plugins/looper/assets/vendor/bootstrap/js/popper.min.js"></script>
+    <script src="resources/plugins/looper/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <!-- END BASE JS -->
+    <!-- BEGIN DevExtreme library -->
+    <script type="text/javascript" src="resources/plugins/extreme20.1.4/js/dx.web.js"></script>
+    <!-- END DevExtreme library -->
+    <!-- BEGIN PLUGINS JS -->
+    <script src="resources/plugins/looper/assets/vendor/particles.js/particles.js"></script>
+    <script type="text/javascript" src="resources/js/util.js"></script>
+    <script>
+        /**
+         * Keep in mind that your scripts may not always be executed after the theme is completely ready,
+         * you might need to observe the `theme:load` event to make sure your scripts are executed after the theme is ready.
+         */
+        $(document).on('theme:init', () => {
+            /* particlesJS.load(@dom-id, @path-json, @callback (optional)); */
+            particlesJS.load('auth-header', 'resources/plugins/looper/assets/javascript/pages/particles.json');
+        });
+
+        $("#loginForm").submit(function(event) {
+            doLogin($('#inputUser').val(), $('#inputPassword').val());
+            event.preventDefault();
+        });
+    </script> <!-- END PLUGINS JS -->
+    <!-- BEGIN THEME JS -->
+    <script src="resources/plugins/looper/assets/javascript/theme.min.js"></script>
+    <!-- END THEME JS -->
+</body>
+</body>
+
+</html>

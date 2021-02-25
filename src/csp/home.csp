@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- End Required meta tags -->
+  <!-- Begin SEO tag -->
+  <title>NPM | Project & Task Management</title>
+  <meta property="og:title" content="ISProject | Project & Task Management" />
+  <meta name="author" content="Henrique Dias" />
+  <meta property="og:locale" content="en_US" />
+  <meta name="description" content="Project & Task Management using InterSystems IRIS and Bootstrap 4" />
+  <meta property="og:description" content="Project & Task Management using InterSystems IRIS and Bootstrap 4" />
+  <link rel="canonical" href="https://github.com/diashenrique/" />
+  <meta property="og:url" content="https://github.com/diashenrique/" />
+  <meta property="og:site_name" content="NPM, No Project Mess - Project & Task Management" />
+  <script type="application/ld+json">
+    {
+      "name": "NPM - No Project Mess",
+      "description": "Project & Task Management using InterSystems IRIS and Bootstrap 4",
+      "author": {
+        "@type": "Person",
+        "name": "Henrique Gonçalves Dias"
+      }
+    }
+  </script>
+  <!-- End SEO tag -->
+  <!-- FAVICONS -->
+  <link rel="apple-touch-icon" sizes="144x144" href="resources/plugins/looper/assets/apple-touch-icon.png" />
+  <link rel="shortcut icon" href="resources/plugins/looper/assets/favicon.ico" />
+  <meta name="theme-color" content="#3063A0" />
+  <!-- End FAVICONS -->
+  <!-- GOOGLE FONT -->
+  <link href="https://fonts.googleapis.com/css?family=Fira+Sans:400,500,600" rel="stylesheet" />
+  <!-- End GOOGLE FONT -->
+  <!-- BEGIN PLUGINS STYLES -->
+  <link rel="stylesheet" href="resources/plugins/looper/assets/vendor/open-iconic/css/open-iconic-bootstrap.min.css" />
+  <link rel="stylesheet" href="resources/plugins/looper/assets/vendor/fontawesome/css/all.css" />
+  <link rel="stylesheet" href="resources/plugins/looper/assets/vendor/flatpickr/flatpickr.min.css" />
+  <!-- END PLUGINS STYLES -->
+  <!-- BEGIN THEME STYLES -->
+  <link rel="stylesheet" href="resources/plugins/looper/assets/stylesheets/theme.min.css" data-skin="default" />
+  <link rel="stylesheet" href="resources/plugins/looper/assets/stylesheets/theme-dark.min.css" data-skin="dark" />
+  <link rel="stylesheet" href="resources/plugins/looper/assets/stylesheets/custom.css" />
+  <!-- Disable unused skin immediately -->
+  <script>
+    var skin = localStorage.getItem("skin") || "default";
+    var unusedLink = document.querySelector('link[data-skin]:not([data-skin="' + skin + '"])');
+    unusedLink.setAttribute("rel", "");
+    unusedLink.setAttribute("disabled", true);
+  </script>
+  <!-- END THEME STYLES -->
+</head>
+
+<body>
+  <!-- .app -->
+  <div class="app has-fullwidth">
+    <header class="app-header app-header-dark">
+      <!-- .top-bar -->
+      <div class="top-bar">
+        <!-- .top-bar-brand -->
+        <div class="top-bar-brand bg-transparent">
+          <!-- toggle menu -->
+          <button class="hamburger hamburger-squeeze mr-2" type="button" data-toggle="aside" aria-label="toggle menu">
+            <span class="hamburger-box">
+              <span class="hamburger-inner"></span>
+            </span>
+          </button>
+          <!-- /toggle menu -->
+        </div>
+        <!-- .top-bar-list -->
+        <div class="top-bar-list">
+          <!-- .top-bar-item -->
+          <div class="top-bar-item px-2 d-md-none d-lg-none d-xl-none">
+            <!-- toggle menu -->
+            <button class="hamburger hamburger-squeeze" type="button" data-toggle="aside" aria-label="Menu">
+              <span class="hamburger-box">
+                <span class="hamburger-inner"></span>
+              </span>
+            </button> <!-- /toggle menu -->
+          </div><!-- /.top-bar-item -->
+        </div>
+        <!-- /.top-bar-brand -->
+      </div>
+      <!-- /.top-bar -->
+    </header>
+    <!-- /.app-header -->
+    <!-- .app-aside -->
+    <aside class="app-aside app-aside-light">
+      <!-- .aside-content -->
+      <div class="aside-content">
+        <!-- .aside-menu -->
+        <div class="aside-menu overflow-hidden">
+          <!-- .stacked-menu -->
+          <nav id="stacked-menu" class="stacked-menu">
+            <!-- .menu -->
+            <ul class="menu">
+              <!-- .menu-item -->
+              <li class="menu-item has-active">
+                <a href="home.csp" class="menu-link">
+                  <span class="menu-icon fas fa-home"></span>
+                  <span class="menu-text">Dashboard</span>
+                </a>
+              </li>
+              <li class="menu-item">
+                <a href="scheduler.csp" class="menu-link">
+                  <span class="menu-icon far fa-calendar-alt"></span>
+                  <span class="menu-text">Scheduler</span>
+                </a>
+              </li>
+              <li class="menu-item">
+                <a href="task.csp" class="menu-link">
+                  <span class="menu-icon fas fa-tasks"></span>
+                  <span class="menu-text">Task</span>
+                </a>
+              </li>
+              <li class="menu-item">
+                <a href="kanban.csp" class="menu-link">
+                  <span class="menu-icon fas fa-chalkboard"></span>
+                  <span class="menu-text">Kanban</span>
+                </a>
+              </li>
+              <li class="menu-item">
+                <a href="gantt.csp" class="menu-link">
+                  <span class="menu-icon fas fa-stream"></span>
+                  <span class="menu-text">Gantt</span>
+                </a>
+              </li>
+              <!-- /.menu-item -->
+              <!-- .menu-item -->
+              <li class="menu-item has-child">
+                <a href="#" class="menu-link">
+                  <span class="menu-icon fas fa-cogs"></span>
+                  <span class="menu-text">Setup</span>
+                </a>
+                <!-- child menu -->
+                <ul class="menu">
+                  <li class="menu-item">
+                    <a href="setup.user.csp" class="menu-link">
+                      <span class="menu-icon fas fa-user"></span>
+                      <span class="menu-text">User</span>
+                    </a>
+                  </li>
+                  <li class="menu-item">
+                    <a href="setup.team.csp" class="menu-link">
+                      <span class="menu-icon fas fa-users"></span>
+                      <span class="menu-text">Team</span>
+                    </a>
+                  </li>
+                  <li class="menu-item">
+                    <a href="setup.project.csp" class="menu-link">
+                      <span class="menu-icon fas fa-project-diagram"></span>
+                      <span class="menu-text">Project</span>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+            <!-- /.menu-item -->
+          </nav>
+          <!-- /.stacked-menu -->
+        </div>
+        <!-- /.aside-menu -->
+        <!-- Skin changer -->
+        <footer class="aside-footer border-top p-3">
+          <button class="btn btn-light btn-block text-primary" data-toggle="skin">Night mode <i class="fas fa-moon ml-1"></i></button>
+        </footer>
+        <!-- /Skin changer -->
+      </div>
+      <!-- /.aside-content -->
+    </aside>
+    <!-- /.app-aside -->
+    <!-- .app-main -->
+    <main class="app-main">
+      <!-- .wrapper -->
+      <div class="wrapper">
+        <!-- .page -->
+        <div class="page">
+        </div>
+        <!-- /.page -->
+      </div>
+      <!-- /.wrapper -->
+    </main>
+    <!-- /.app-main -->
+  </div>
+  <!-- /.app -->
+  <!-- BEGIN BASE JS -->
+  <script src="resources/plugins/looper/assets/vendor/jquery/jquery.min.js"></script>
+  <script src="resources/plugins/looper/assets/vendor/bootstrap/js/popper.min.js"></script>
+  <script src="resources/plugins/looper/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <!-- END BASE JS -->
+  <!-- BEGIN PLUGINS JS -->
+  <script src="resources/plugins/looper/assets/vendor/pace/pace.min.js"></script>
+  <script src="resources/plugins/looper/assets/vendor/stacked-menu/stacked-menu.min.js"></script>
+  <script src="resources/plugins/looper/assets/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+  <script src="resources/plugins/looper/assets/vendor/flatpickr/flatpickr.min.js"></script>
+  <script src="resources/plugins/looper/assets/vendor/easy-pie-chart/jquery.easypiechart.min.js"></script>
+  <script src="resources/plugins/looper/assets/vendor/chart.js/Chart.min.js"></script>
+  <!-- END PLUGINS JS -->
+  <!-- BEGIN THEME JS -->
+  <script src="resources/plugins/looper/assets/javascript/theme.min.js"></script>
+  <!-- END THEME JS -->
+  <!-- BEGIN PAGE LEVEL JS -->
+  <script src="resources/plugins/looper/assets/javascript/pages/dashboard-demo.js"></script>
+  <!-- END PAGE LEVEL JS -->
+</body>
+
+</html>

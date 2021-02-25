@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<link
+		href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&amp;family=Roboto+Mono&amp;display=swap"
+		rel="stylesheet">
+	<link href="resources/assets/build/styles/ltr-core.css" rel="stylesheet">
+	<link href="resources/assets/build/styles/ltr-vendor.css" rel="stylesheet">
+	<link href="resources/assets/build/styles/ltr-dashboard1.css" rel="stylesheet">
+	<link href="resources/img/ISC_IRIS_icon.ico" rel="shortcut icon" type="image/x-icon">
+	<title>IRIS Vaccine Tracker</title>
+</head>
+
+<body class="theme-light preload-active aside-active aside-mobile-minimized aside-desktop-maximized" id="fullscreen">
+	<!-- BEGIN Preload -->
+	<div class="preload">
+		<div class="preload-dialog">
+			<!-- BEGIN Spinner -->
+			<div class="spinner-border text-primary preload-spinner"></div>
+			<!-- END Spinner -->
+		</div>
+	</div>
+	<!-- END Preload -->
+	<!-- BEGIN Page Holder -->
+	<div class="holder">
+		<!-- BEGIN Aside -->
+		<div class="aside">
+			<div class="aside-header">
+				<h3 class="aside-title">Menu</h3>
+				<div class="aside-addon">
+					<button class="btn btn-label-primary btn-icon btn-lg" data-toggle="aside">
+						<i class="fa fa-times aside-icon-minimize"></i>
+						<i class="fa fa-thumbtack aside-icon-maximize"></i>
+					</button>
+				</div>
+			</div>
+			<div class="aside-body" data-simplebar>
+				<!-- BEGIN Menu -->
+				<div class="menu">
+					<div class="menu-item">
+						<a href="index.html" class="menu-item-link">
+							<div class="menu-item-icon">
+								<i class="fa fa-desktop"></i>
+							</div>
+							<span class="menu-item-text">Dashboard</span>
+						</a>
+					</div>
+					<!-- BEGIN Menu Section -->
+					<div class="menu-section">
+						<div class="menu-section-icon">
+							<i class="fa fa-ellipsis-h"></i>
+						</div>
+						<h2 class="menu-section-text">Data</h2>
+					</div>
+                    <div class="menu-item">
+						<a href="datatable.html" class="menu-item-link">
+							<div class="menu-item-icon">
+								<i class="fa fa-table"></i>
+							</div>
+							<span class="menu-item-text">Datatable</span>
+						</a>
+					</div>
+                    <div class="menu-item">
+						<a href="map.html" class="menu-item-link">
+							<div class="menu-item-icon">
+								<i class="fas fa-map-marked-alt"></i>
+							</div>
+							<span class="menu-item-text">Map</span>
+						</a>
+					</div>
+                    <!-- END Menu Section -->
+				</div>
+				<!-- END Menu -->
+			</div>
+		</div>
+		<!-- END Aside -->
+		<!-- BEGIN Page Wrapper -->
+		<div class="wrapper">
+			<!-- BEGIN Header -->
+			<div class="header">
+				<!-- BEGIN Header Holder -->
+				<div class="header-holder header-holder-desktop">
+					<div class="header-container container-fluid">
+						<div class="rich-list-item">
+							<div class="rich-list-prepend">
+								<!-- BEGIN Avatar -->
+								<div class="avatar avatar-label-primary">
+									<div class="avatar-display">
+										<i class="fas fa-syringe"></i>
+									</div>
+								</div>
+								<!-- END Avatar -->
+							</div>
+							<div class="rich-list-content">
+								<h4 class="rich-list-title">IRIS Vaccine Tracker</h4>
+								<span class="rich-list-subtitle">COVID-19</span>
+							</div>
+						</div>
+						<i class="header-divider"></i>
+						<div class="header-wrap header-wrap-block justify-content-start">
+							<!-- BEGIN Breadcrumb -->
+							<div class="breadcrumb">
+								<a href="index.html" class="breadcrumb-item">
+									<div class="breadcrumb-icon">
+										<i data-feather="home"></i>
+									</div>
+									<span class="breadcrumb-text">Dashboard</span>
+								</a>
+							</div>
+                            <i class="header-divider"></i>
+                            <div class="breadcrumb">
+								<a href="datatable.html" class="breadcrumb-item">
+									<div class="breadcrumb-icon">
+										<i class="fas fa-table"></i>
+									</div>
+									<span class="breadcrumb-text">Datatable</span>
+								</a>
+							</div>
+							<!-- END Breadcrumb -->
+						</div>
+						<div class="header-wrap">
+							<button class="btn btn-label-info btn-icon ml-2" id="fullscreen-trigger"
+								data-toggle="tooltip" title="Toggle fullscreen" data-placement="left">
+								<i class="fa fa-expand fullscreen-icon-expand"></i>
+								<i class="fa fa-compress fullscreen-icon-compress"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+				<!-- END Header Holder -->
+
+				<!-- BEGIN Header Holder -->
+				<div class="header-holder header-holder-mobile">
+					<div class="header-container container-fluid">
+						<div class="rich-list-item">
+							<div class="rich-list-prepend">
+								<!-- BEGIN Avatar -->
+								<div class="avatar avatar-label-primary">
+									<div class="avatar-display">
+										<i class="fas fa-syringe"></i>
+									</div>
+								</div>
+								<!-- END Avatar -->
+							</div>
+							<div class="rich-list-content">
+								<h4 class="rich-list-title">IRIS Vaccine Tracker</h4>
+								<span class="rich-list-subtitle">COVID-19</span>
+							</div>
+						</div>
+						<i class="header-divider"></i>
+						<div class="header-wrap header-wrap-block justify-content-start">
+							<!-- BEGIN Breadcrumb -->
+							<div class="breadcrumb">
+								<a href="datatable.html" class="breadcrumb-item">
+									<div class="breadcrumb-icon">
+										<i class="fas fa-table"></i>
+									</div>
+									<span class="breadcrumb-text">Datatable</span>
+								</a>
+							</div>
+							<!-- END Breadcrumb -->
+						</div>
+						<div class="header-wrap">
+							<button class="btn btn-flat-primary btn-icon ml-2" data-toggle="aside">
+								<i class="fa fa-bars"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+				<!-- END Header Holder -->
+			</div>
+			<!-- END Header -->
+
+			<!-- BEGIN Page Content -->
+			<div class="content ">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-12">
+							<!-- BEGIN Portlet -->
+							<div class="portlet">
+								<div class="portlet-header portlet-header-bordered">
+									<h3 class="portlet-title">Datatable Consuming REST API</h3>
+								</div>
+								<div class="portlet-body">
+									<p>The data table below shows the details that IRIS REST API provides. The REST API <code>/sql/list</code> provides the array created using the SQL: </br><code>SELECT CountryId->Name as Country, DateReport, Vaccine, TotalVaccinations FROM diashenrique_data.Vaccinations</code></p>
+									<hr>
+									<!-- BEGIN Datatable -->
+									<table id="datatable-1" class="table table-bordered table-striped table-hover">
+										<thead>
+											<tr>
+												<th>Country</th>
+												<th>Date</th>
+												<th>Vaccine</th>
+												<th>Total Vaccinations</th>
+												<th>Total Population</th>
+												<th>% of Population</th>
+											</tr>
+										</thead>
+									</table>
+									<!-- END Datatable -->
+								</div>
+							</div>
+							<!-- END Portlet -->
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- END Page Content -->
+			<!-- BEGIN Footer -->
+			<div class="footer">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-md-6">
+							<p class="text-left mb-0">Copyright <i class="far fa-copyright"></i> <span
+									id="copyright-year"></span> <a href="https://github.com/diashenrique">Henrique
+									Dias</a></p>
+						</div>
+						<div class="col-md-6 d-none d-md-block">
+							<p class="text-right mb-0">Made with <i class="fa fa-heart text-danger"></i></p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- END Footer -->
+		</div>
+		<!-- END Page Wrapper -->
+	</div>
+	<!-- END Page Holder -->
+	<!-- BEGIN Scroll To Top -->
+	<div class="scrolltop">
+		<button class="btn btn-info btn-icon btn-lg">
+			<i class="fa fa-angle-up"></i>
+		</button>
+	</div>
+	<!-- END Scroll To Top -->
+	<script type="text/javascript" src="resources/js/mandatory.js"></script>
+	<script type="text/javascript" src="resources/js/core.js"></script>
+	<script type="text/javascript" src="resources/js/vendor.js"></script>
+	<script type="text/javascript" src="resources/js/dashboard1.js"></script>
+	<script type="text/javascript" src="resources/js/home.js"></script>
+	<script type="text/javascript" src="resources/js/customDatatable.js"></script>
+</body>
+
+</html>
