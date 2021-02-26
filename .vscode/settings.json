@@ -14,11 +14,11 @@
       "internalPort": 52773
     },
     "links": {
-      "Portal": "http://localhost:52773/csp/sys/%25CSP.Portal.Home.zen?$NAMESPACE=%25SYS",
+      "Portal": "http://localhost:${port}/csp/sys/%25CSP.Portal.Home.zen?$NAMESPACE=%25SYS",
       "RESTForms2-UI": "http://localhost:${port}/restforms2-ui/index.html",
-      "Dashboard": "http://localhost:52773/csp/irisapp/index.html",
-      "Datatable": "http://localhost:52773/csp/irisapp/datatable.html",
-      "restforms2-devextreme-poc": "http://localhost:52773/csp/irisapp/index.html?formName=Form.Test.Person"
+      "Dashboard": "http://localhost:${port}/csp/irisapp/index.html",
+      "RAD": "http://localhost:${port}/csp/irisapp/rad.html",
+      "restforms2-devextreme-poc": "http://localhost:${port}/csp/irisapp/index.html?formName=Form.Test.Person"
     }
   }
 
