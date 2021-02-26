@@ -64,7 +64,21 @@ var createFormWizard = function () {
           }
         ]
       },
-       {
+      {
+        itemType: "group",
+        caption: "File",
+        items: [{
+          dataField: "file",
+          editorType: "dxFileUploader",
+          allowedFileExtensions: [".csv"],
+          editorOptions: {
+            uploadMode: "useForm"
+          },
+          label: {
+            visible: false
+          }
+        }]
+      }, {
         itemType: "button",
         horizontalAlignment: "right",
         buttonOptions: {
