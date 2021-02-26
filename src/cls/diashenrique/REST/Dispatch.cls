@@ -10,6 +10,7 @@ XData UrlMap [ XMLNamespace = "http://www.intersystems.com/urlmap" ]
 <Route Url="/" Method="GET" Call="GetInfo" Cors="true"/>
 
 <Route Url="/todo" Method="GET" Call="diashenrique.REST.Routes.Task:TodoList" Cors="true"/>
+<Route Url="/wizard" Method="POST" Call="diashenrique.REST.Routes.Wizard:Upload" Cors="true"/>
 </Routes>
 }
 

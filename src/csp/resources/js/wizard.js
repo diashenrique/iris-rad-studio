@@ -1,5 +1,5 @@
 var urlOrigin = window.location.origin;
-var urlREST = `${urlOrigin}/forms/form`;
+var urlREST = `${urlOrigin}/csp/irisapp/api`;
 
 $(document).ajaxError(function (event, jqXHR, ajaxSettings, thrownError) {
   console.log(jqXHR.status, event, ajaxSettings, thrownError)
@@ -12,14 +12,12 @@ var qs = getQueryString();
 var formName = qs.formName || 'Form.Test.Person';
 
 $(document).ready(function () {
-  $("#button").hide();
   createFormWizard();
 });
 
 var createFormWizard = function () {
 
   var fileUploader = $("#formWizard").dxForm({
-    //formData: formData,
     readOnly: false,
     showColonAfterLabel: true,
     showValidationSummary: true,
@@ -66,27 +64,28 @@ var createFormWizard = function () {
           }
         ]
       },
-      {
-        itemType: "group",
-        caption: "File",
-        items: [{
-          dataField: "file",
-          editorType: "dxFileUploader",
-          allowedFileExtensions: [".csv"],
-          editorOptions: {
-            uploadMode: "useForm"
-          },
-          label: {
-            visible: false
-          }
-        }]
-      }, {
+       {
         itemType: "button",
         horizontalAlignment: "right",
         buttonOptions: {
           text: "Upload",
           type: "default",
-          useSubmitBehavior: true
+          onClick: function () {
+            var dataForm = $("#formWizard").dxForm("instance").option("formData");
+
+            // console.log(dataForm);
+
+            $.ajax({
+              url: `${urlREST}` + "/wizard",
+              method: "POST",
+              processData: true,
+              contentType: "application/json",
+              data: JSON.stringify(dataForm)
+            }).done(function (msg) {
+              DevExpress.ui.notify("Upload sucessfully");
+            });
+            
+          }
         }
       }
     ]
