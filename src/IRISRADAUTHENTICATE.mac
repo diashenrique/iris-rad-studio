@@ -1,0 +1,22 @@
+ROUTINE IRISRADAuthentication
+IRISRADAuthentication(ServiceName,Username,Password,Properties,Status) PUBLIC {
+  #include %occStatus
+  #include %occErrors
+
+  Set Namespace = %session.Namespace
+  ZNspace Namespace
+
+  Set $ZTRAP="Error"
+
+  Set status = ##class(User.forms.UserForm).Authenticate(Username,Password,.Properties,.Status)
+
+  ZNspace "%SYS"
+
+  Quit $SYSTEM.Status.OK()
+
+Error
+  ZNspace "%SYS"
+  Set $ZTRAP=""
+  Set Status = $SYSTEM.Status.Error($$$ObjectScriptError,$ZERROR)
+  Quit Status
+}

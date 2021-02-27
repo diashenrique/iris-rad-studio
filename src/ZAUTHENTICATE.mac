@@ -1,0 +1,21 @@
+ROUTINE ZAUTHENTICATE
+ZAUTHENTICATE(ServiceName,Username,Password,Properties) PUBLIC {
+  #include %occStatus
+  #include %occErrors
+  
+  Set status = $$$OK
+
+  Do IRISRADAuthentication^IRISRADAuthentication(ServiceName,Username,Password,.Properties,.status)
+  If ($NAMESPACE '= "%SYS") {
+    ZNspace "%SYS"
+  }
+  
+  // Put other ZAUTHENTICATE logic as you needs here...
+
+  Quit status
+
+Error
+  ZNspace "%SYS"
+  Set $ZTRAP=""
+  Quit $SYSTEM.Status.Error($$$ObjectScriptError,$ZERROR)
+}

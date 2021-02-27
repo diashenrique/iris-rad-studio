@@ -45,6 +45,12 @@ ClassMethod DoLogin() As %Status
     // As seen in RESTForm2UI, the test method is called for login logic; such method uses
     // auth info stored in AUTHENTICATION HTTP header.
     Return ##class(Form.REST.Main).test()
+    
+    #; Set authorization = %request.GetCgiEnv("HTTP_AUTHORIZATION")
+    #; Set authorization = $PIECE(authorization, " ", 2)
+    #; Set authorization = ##class(%SYSTEM.Encryption).Base64Decode(authorization)
+    #; Set user = $PIECE(authorization, ":", 1)
+    #; Set pwd = $PIECE(authorization, ":", 1)
   } Else {
     // todo: implement other auth types
     Throw ##class(%Exception.General).%New("Invalid value for AuthType parameter: "_..#AuthType)
