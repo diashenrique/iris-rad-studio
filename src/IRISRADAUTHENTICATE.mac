@@ -8,7 +8,7 @@ IRISRADAuthentication(ServiceName,Username,Password,Properties,Status) PUBLIC {
 
   Set $ZTRAP="Error"
 
-  Set status = ##class(User.forms.UserForm).Authenticate(Username,Password,.Properties,.Status)
+  Set status = ##class(dc.irisrad.default.UserForm).Authenticate(Username,Password,.Properties,.Status)
 
   ZNspace "%SYS"
 

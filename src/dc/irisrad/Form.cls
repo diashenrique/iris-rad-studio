@@ -5,6 +5,8 @@ Property Form As %Persistent;
 
 Property Name As %String [ Required ];
 
+Property DisplayFormName As %String [ Required ];
+
 Property DisplayField As %String [ Required ];
 
 Property Fields As %DynamicArray [ Required ];
@@ -19,10 +21,15 @@ Method Save() As %Status
     // form creation
     Set ..Form = ..CreateFormClass()
     
+    Set formName = ..DisplayFormName
+    If (formName = "") {
+      Set formName = ..Name
+    }
+    
     // form parameters
     Do ..SetParameters([{
       "name": "FORMNAME",
-      "value": "FormTest"
+      "value": (formName)
     },{
       "name": "OBJPERMISSIONS",
       "value": "CRUD"

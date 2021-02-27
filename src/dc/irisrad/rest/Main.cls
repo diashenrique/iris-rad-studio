@@ -77,6 +77,7 @@ ClassMethod CreateForm() As %Status
     Set body = {}.%FromJSON(%request.Content)
     Set form = ##class(dc.irisrad.Form).%New()
     Set form.Name = body.name
+    Set form.DisplayFormName = body.displayFormName
     Set form.DisplayField = body.displayProperty
     Set form.Fields = body.fields
     $$$TOE(sc, form.Save())

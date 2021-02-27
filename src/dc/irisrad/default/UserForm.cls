@@ -1,6 +1,6 @@
 Include (%occStatus, %occErrors)
 
-Class User.forms.UserForm Extends (%Persistent, dc.irisrad.FormAdaptor) [ Inheritance = right, Not ProcedureBlock ]
+Class dc.irisrad.default.UserForm Extends (%Persistent, dc.irisrad.FormAdaptor) [ Inheritance = right, Not ProcedureBlock ]
 {
 
 Property name As %Library.String(%JSONINCLUDE = "INOUT", %JSONREFERENCE = "ID", DISPLAYNAME = "Name");
@@ -11,7 +11,7 @@ Property password As %Library.String(%JSONINCLUDE = "INOUT", %JSONREFERENCE = "I
 
 Parameter DISPLAYPROPERTY = "name";
 
-Parameter FORMNAME = "FormTest";
+Parameter FORMNAME = "UserForm";
 
 Parameter OBJPERMISSIONS = "CRUD";
 
@@ -23,7 +23,7 @@ ClassMethod Hash(pValue As %String) As %String
 Method %OnBeforeSave(insert As %Boolean) As %Status [ Private, ServerOnly = 1 ]
 {
   // Ensure that password is not stored in plain text
-  Set oldPassword = ##class(User.forms.UserForm).passwordGetStored(..%Id())
+  Set oldPassword = ##class(dc.irisrad.default.UserForm).passwordGetStored(..%Id())
   If (..password '= oldPassword) {
     Set ..password = ..Hash(..password)
   }
@@ -43,7 +43,7 @@ ClassMethod Authenticate(pUsername As %String, pPassword As %String, ByRef pProp
   Set pStatus = $$$OK
   
   // Check if username is valid
-  Set sql = "SELECT name FROM User_forms.UserForm WHERE username = ?"
+  Set sql = "SELECT name FROM dc_irisrad_default.UserForm WHERE username = ?"
   Set stmt = ##class(%SQL.Statement).%New()
   $$$TOE(st, stmt.%Prepare(sql))
   Set rs = stmt.%Execute(pUsername)
@@ -57,7 +57,7 @@ ClassMethod Authenticate(pUsername As %String, pPassword As %String, ByRef pProp
 
   // Check if username and password are valid
   Set encPsw = ..Hash(pPassword)
-  Set sql = "SELECT name FROM User_forms.UserForm WHERE username = ? AND password = ?"
+  Set sql = "SELECT name FROM dc_irisrad_default.UserForm WHERE username = ? AND password = ?"
   Set stmt = ##class(%SQL.Statement).%New()
   $$$TOE(st, stmt.%Prepare(sql))
   Set rs = stmt.%Execute(pUsername, encPsw)
@@ -97,11 +97,11 @@ Storage Default
 <Value>password</Value>
 </Value>
 </Data>
-<DataLocation>^User.forms.UserFormD</DataLocation>
+<DataLocation>^dc.irisrad.default.UserFormD</DataLocation>
 <DefaultData>UserFormDefaultData</DefaultData>
-<IdLocation>^User.forms.UserFormD</IdLocation>
-<IndexLocation>^User.forms.UserFormI</IndexLocation>
-<StreamLocation>^User.forms.UserFormS</StreamLocation>
+<IdLocation>^dc.irisrad.default.UserFormD</IdLocation>
+<IndexLocation>^dc.irisrad.default.UserFormI</IndexLocation>
+<StreamLocation>^dc.irisrad.default.UserFormS</StreamLocation>
 <Type>%Storage.Persistent</Type>
 }
 
