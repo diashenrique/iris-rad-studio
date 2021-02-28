@@ -17,7 +17,18 @@ function sendRequest(url, method, data) {
         jsonResult.data = result.children;
         d.resolve(method === "GET" ? result.children : result);
     }).fail(function (xhr) {
-        d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+        if (xhr.statusText !== 'OK') {
+            d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+        } else {
+            try {
+                var result = eval(`(${xhr.responseText})`);
+                var jsonResult = {}
+                jsonResult.data = result.children;
+                d.resolve(method === "GET" ? result.children : result);
+            } catch(e) {
+                d.reject(e);
+            }
+        }
     });
 
     return d.promise();
