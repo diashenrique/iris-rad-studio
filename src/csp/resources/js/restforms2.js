@@ -15,7 +15,8 @@
     "Serial": 'serial',
     "Form": 'form',
     "List": 'list',
-    "Array": 'array'
+    "Array": 'array',
+    "Password": "dc.irisrad.datatype.Password"
   }
 
   // adapted from: https://github.com/intersystems-community/restforms-angular/blob/develop/src/app/services/data.service.ts
@@ -37,6 +38,8 @@
       case '%Library.Time':
       case '%Library.PosixTime':
         return FieldType.Time;
+      case 'dc.irisrad.datatype.Password':
+        return FieldType.Password;
     }
     return type;
   }

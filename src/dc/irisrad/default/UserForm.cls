@@ -7,7 +7,7 @@ Property name As %Library.String(%JSONINCLUDE = "INOUT", %JSONREFERENCE = "ID", 
 
 Property username As %Library.String(%JSONINCLUDE = "INOUT", %JSONREFERENCE = "ID", DISPLAYNAME = "User name");
 
-Property password As %Library.String(%JSONINCLUDE = "INOUT", %JSONREFERENCE = "ID", DISPLAYNAME = "Password");
+Property password As dc.irisrad.datatype.Password(%JSONINCLUDE = "INOUT", %JSONREFERENCE = "ID", DISPLAYNAME = "Password");
 
 Parameter DISPLAYPROPERTY = "name";
 

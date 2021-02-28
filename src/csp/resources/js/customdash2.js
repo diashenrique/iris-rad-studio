@@ -104,6 +104,12 @@ var createDefaultCRUDForm = function () {
           dataType: getDevExtremeFieldType(rf2Field)
         }
 
+        if (rf2Field.type === FieldType.Password) {
+          objCol.editorOptions = {
+            mode: 'password'
+          }
+        }
+
         if (getPropType(rf2Field) == FieldType.Form) {
           console.log("Campo relacionado ", objCol);
           var lookupForm = rf2Field.type;
