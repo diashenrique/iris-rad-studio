@@ -10,12 +10,7 @@ $(document).ajaxError(function (event, jqXHR, ajaxSettings, thrownError) {
 
 var qs = getQueryString();
 var formName = qs.formName || 'Form.Test.Person';
-var queryName = qs.queryName
-
-$(document).ready(function () {
-  $("#divFormName").text(` ${formName}`);
-  createDefaultCRUDForm();
-});
+var queryName = qs.queryName;
 
 var dataUrl;
 var metadataUrl;
@@ -27,6 +22,13 @@ if (formName) {
     metadataUrl = `${urlREST}/info/${formName}/${queryName}`;
   }
 }
+
+$(document).ready(function () {
+  if (formName) {
+    $("#divFormName").text(` ${formName}`);
+    createDefaultCRUDForm();
+  }
+});
 
 var createQueryCustomStore = function () {
   return new DevExpress.data.CustomStore({
@@ -140,7 +142,6 @@ var createDefaultCRUDForm = function () {
 }
 
 var createFormField = (rf2Field) => {
-
   var objCol = {
     dataField: rf2Field.name,
     caption: rf2Field.displayName,
