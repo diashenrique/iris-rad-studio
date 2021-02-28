@@ -37,5 +37,4 @@ Login with _SYSTEM user
 
 - [Henrique Dias](https://community.intersystems.com/user/henrique-dias-2)
 - [José Roberto Pereira](https://community.intersystems.com/user/jos%C3%A9-roberto-pereira-0)
-- [Renato Banzai](https://community.intersystems.com/user/renato-banzai)
   
