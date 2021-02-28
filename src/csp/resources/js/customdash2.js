@@ -44,22 +44,28 @@ $.ajax({
   },
   complete: (resp) => {
     var forms = resp.responseJSON;
+    // creation of submenus for forms
     $('#menu-forms').html(forms.map(form => {
       return `
       <li class="menu-item">
         <a href="rad.html?formName=${form.class}" class="menu-link">${form.name}</a>
       </li>`
     }))
-    $("#form-selector").dxTileView({
-      items: forms,
-      direction: "vertical",
-      itemTemplate: function (itemData, itemIndex, itemElement) {
-        itemElement.append(`<div>${itemData.name}</div>`);
-      },
-      onItemClick: (event) => {
-        window.location.href = `${window.location.href}?formName=${event.itemData.class}`;
-      }
-    });
+    if (!formName) {
+      // creation of items on main widget
+      $("#form-selector").dxTileView({
+        items: forms,
+        direction: "vertical",
+        itemTemplate: function (itemData, itemIndex, itemElement) {
+          itemElement.append(
+            `<div>${itemData.name}</div>`
+          );
+        },
+        onItemClick: (event) => {
+          window.location.href = `${window.location.href}?formName=${event.itemData.class}`;
+        }
+      });
+    }
   }
 });
 
