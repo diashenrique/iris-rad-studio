@@ -96,47 +96,7 @@ var createDefaultCRUDForm = function () {
     },
     complete: (resp) => {
       var rf2FormInfo = resp.responseJSON;
-      var cols = rf2FormInfo.fields.map(rf2Field => {
-
-        var objCol = {
-          dataField: rf2Field.name,
-          caption: rf2Field.displayName,
-          dataType: getDevExtremeFieldType(rf2Field)
-        }
-
-        if (rf2Field.type === FieldType.Password) {
-          objCol.editorOptions = {
-            mode: 'password'
-          }
-        }
-
-        if (getPropType(rf2Field) == FieldType.Form) {
-          console.log("Campo relacionado ", objCol);
-          var lookupForm = rf2Field.type;
-          var fieldValue = rf2Field.name.valueOf();
-          objCol.lookup = {
-            dataSource: {
-              store: new DevExpress.data.CustomStore({
-                key: "_id",
-                //loadMode: "raw",
-                load: function () {
-                  console.log(`${urlREST}/objects/${lookupForm}/info`);
-                  return sendRequest(`${urlREST}/objects/${lookupForm}/info`);
-                },
-                byKey: function (key) {
-                  console.log(`${urlREST}/objects/${lookupForm}/${key}`);
-                  return sendRequest(`${urlREST}/object/${lookupForm}/${key}`);
-                }
-              })
-            },
-            valueExpr: "_id",
-            displayExpr: "displayName"
-          }
-
-        };
-
-        return objCol;
-      });
+      var cols = rf2FormInfo.fields.map(rf2Field => createFormField(rf2Field));
 
       if (rf2FormInfo.toolbarUIDef) {
         // todo: fix this security threat
@@ -177,4 +137,45 @@ var createDefaultCRUDForm = function () {
       }
     }
   });
+}
+
+var createFormField = (rf2Field) => {
+
+  var objCol = {
+    dataField: rf2Field.name,
+    caption: rf2Field.displayName,
+    dataType: getDevExtremeFieldType(rf2Field)
+  }
+
+  if (rf2Field.type === FieldType.Password) {
+    objCol.editorOptions = {
+      mode: 'password'
+    }
+  }
+
+  if (getPropType(rf2Field) == FieldType.Form) {
+    console.log("Campo relacionado ", objCol);
+    var lookupForm = rf2Field.type;
+    var fieldValue = rf2Field.name.valueOf();
+    objCol.lookup = {
+      dataSource: {
+        store: new DevExpress.data.CustomStore({
+          key: "_id",
+          load: function () {
+            console.log(`${urlREST}/objects/${lookupForm}/info`);
+            return sendRequest(`${urlREST}/objects/${lookupForm}/info`);
+          },
+          byKey: function (key) {
+            console.log(`${urlREST}/objects/${lookupForm}/${key}`);
+            return sendRequest(`${urlREST}/object/${lookupForm}/${key}`);
+          }
+        })
+      },
+      valueExpr: "_id",
+      displayExpr: "displayName"
+    }
+
+  };
+
+  return objCol;
 }
