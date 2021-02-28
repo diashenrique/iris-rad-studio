@@ -9,11 +9,12 @@ $(document).ajaxError(function (event, jqXHR, ajaxSettings, thrownError) {
 });
 
 var qs = getQueryString();
-var formName = qs.formName || 'Form.Test.Person';
+var formName = qs.formName;
 var queryName = qs.queryName;
 
 var dataUrl;
 var metadataUrl;
+var formsUrl = `${urlREST}/info`;
 if (formName) {
   dataUrl = `${urlREST}/objects/${formName}/allobj?size=1000000`;
   metadataUrl = `${urlREST}/info/${formName}`;
@@ -24,9 +25,37 @@ if (formName) {
 }
 
 $(document).ready(function () {
-  if (formName) {
+  if (!formName) {
+    createFormSelector();
+  } else {
     $("#divFormName").text(` ${formName}`);
     createDefaultCRUDForm();
+  }
+});
+
+var createFormSelector = () => 
+$.ajax({
+  url: formsUrl,
+  method: "GET",
+  processData: false,
+  contentType: "application/json",
+  error: (jqXHR, textStatus, errorThrown) => {
+    console.log(jqXHR.status, textStatus, errorThrown);
+    return true;
+  },
+  complete: (resp) => {
+    var forms = resp.responseJSON;
+    console.log(forms)
+    $("#form-selector").dxTileView({
+      items: forms,
+      direction: "vertical",
+      itemTemplate: function (itemData, itemIndex, itemElement) {
+        itemElement.append(`<div>${itemData.name}</div>`);
+      },
+      onItemClick: (event) => {
+        window.location.href = `${window.location.href}?formName=${event.itemData.class}`;
+      }
+    });
   }
 });
 
