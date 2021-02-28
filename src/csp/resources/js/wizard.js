@@ -1,5 +1,6 @@
 var urlOrigin = window.location.origin;
-var urlREST = `${urlOrigin}/csp/irisapp/api`;
+//var urlREST = `${urlOrigin}/csp/irisapp/api`;
+var urlREST = `${urlOrigin}/forms`;
 
 $(document).ajaxError(function (event, jqXHR, ajaxSettings, thrownError) {
   console.log(jqXHR.status, event, ajaxSettings, thrownError)

@@ -187,7 +187,7 @@
                     <!-- .card-body -->
                     <div class="card-body">
                       <h4 class="card-title"> Import Definitions</h4>
-                      <form enctype="multipart/form-data" method="post" id="fileUploadForm" action="analytics.csp">
+                      <form enctype="multipart/form-data" method="post" id="fileUploadForm" action="wizard.csp">
                         <!-- .form-row -->
                         <div class="form-row">
                           <div class="input-group col-md-6 mb-2">
@@ -274,6 +274,7 @@
                           } else {
                             $$$ThrowOnError(##class(community.csvgen).StreamToFile(stream,.filename))
                             $$$ThrowOnError(##class(community.csvgen).Generate(filename,tSeparator,tSourceClass))
+                            $$$ThrowOnError(##class(dc.irisrad.Wizard).AddRESTFormsSupport(tSourceClass))
                           }
 
                           if (tCreateCube'="") {
