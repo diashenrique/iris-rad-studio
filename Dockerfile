@@ -34,9 +34,17 @@ RUN \
   do $System.OBJ.LoadDir("/opt/irisapp/src","ck",,1) \
   do ##class(Form.Util.Init).populateTestForms() \
   zn "%SYS" \
+  write "Installing routinies for delegated authentication...",! \
+  do $System.OBJ.Load("/opt/irisapp/src/IRISRADAUTHENTICATE.mac","ck",,1) \
+  do $System.OBJ.Load("/opt/irisapp/src/ZAUTHENTICATE.mac","ck",,1) \
+  set sc = ##Class(Security.System).Get("SYSTEM",.Properties) \
+  zw sc \
+  set Properties("AutheEnabled") = $ZB(Properties("AutheEnabled"),8192,7) \
+  set sc = ##Class(Security.System).Modify("SYSTEM",.Properties) \
+  zw sc \
   write "Modify forms application security...",! \
   set webName = "/forms" \
-  set webProperties("AutheEnabled") = 16416 \
+  set webProperties("AutheEnabled") = 8224 \
   set webProperties("CookiePath") = "/forms/" \
   set webProperties("MatchRoles") = ":%DB_%DEFAULT" \
   set webProperties("DispatchClass") = "dc.irisrad.rest.Main" \
