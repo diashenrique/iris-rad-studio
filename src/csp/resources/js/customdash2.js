@@ -25,9 +25,8 @@ if (formName) {
 }
 
 $(document).ready(function () {
-  if (!formName) {
-    createFormSelector();
-  } else {
+  createFormSelector();
+  if (formName) {
     $("#divFormName").text(` ${formName}`);
     createDefaultCRUDForm();
   }
@@ -45,7 +44,12 @@ $.ajax({
   },
   complete: (resp) => {
     var forms = resp.responseJSON;
-    console.log(forms)
+    $('#menu-forms').html(forms.map(form => {
+      return `
+      <li class="menu-item">
+        <a href="rad.html?formName=${form.class}" class="menu-link">${form.name}</a>
+      </li>`
+    }))
     $("#form-selector").dxTileView({
       items: forms,
       direction: "vertical",
