@@ -11,7 +11,7 @@ Property password As dc.irisrad.datatype.Password(%JSONINCLUDE = "INOUT", %JSONR
 
 Parameter DISPLAYPROPERTY = "name";
 
-Parameter FORMNAME = "UserForm";
+Parameter FORMNAME = "Users";
 
 Parameter OBJPERMISSIONS = "CRUD";
 

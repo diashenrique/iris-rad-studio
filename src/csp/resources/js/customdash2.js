@@ -58,16 +58,37 @@ $.ajax({
         direction: "vertical",
         itemTemplate: function (itemData, itemIndex, itemElement) {
           itemElement.append(
-            `<div>${itemData.name}</div>`
+            `<div>${itemData.name}</div>
+            <div id=\"button-remove-form-${itemIndex}\"></div>`
           );
+          $(`#button-remove-form-${itemIndex}`).dxButton({
+              icon: "trash",
+              onClick: function(dxEvt) {
+                removeForm(itemData.class)
+                .then(() => {
+                  notify("Form deleted");
+                  createFormSelector();
+                })
+                .fail(() => {
+                  notify("Error in form deleting", "error")
+                });
+              }
+          });
         },
-        onItemClick: (event) => {
-          window.location.href = `${window.location.href}?formName=${event.itemData.class}`;
+        onItemClick: (dxEvt) => {
+          if ($(dxEvt.event.target).hasClass('dx-tile-content')) {
+            window.location.href = `${window.location.href}?formName=${dxEvt.itemData.class}`;
+          }
         }
       });
     }
   }
 });
+
+var removeForm = function(formName) {
+  var removeFormUrl = `${urlREST}/${formName}`;
+  return sendRequest(removeFormUrl, 'DELETE');
+}
 
 var createQueryCustomStore = function () {
   return new DevExpress.data.CustomStore({

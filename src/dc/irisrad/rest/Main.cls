@@ -81,6 +81,8 @@ ClassMethod CreateForm() As %Status
     Set form.DisplayField = body.displayProperty
     Set form.Fields = body.fields
     $$$TOE(sc, form.Save())
+    /// ugly hack for jQuery Ajax error
+    Write 1
   }
   Catch ex {
     Set sc = ex.AsStatus()
@@ -92,7 +94,15 @@ ClassMethod DeleteForm(pFormName As %String) As %Status
 {
   Set sc = $$$OK
   Try {
+    // Avoid default forms to be deleted
+    If ($FIND(pFormName, "dc.irisrad.default.") > 0) {
+      Throw ##class(%Exception.General).%New("A default form can't be deleted.")
+    }
+
     $$$TOE(sc, ##class(%Dictionary.ClassDefinition).%DeleteId(pFormName))
+    
+    /// ugly hack for jQuery Ajax error
+    Write 1
   }
   Catch ex {
     Set sc = ex.AsStatus()
