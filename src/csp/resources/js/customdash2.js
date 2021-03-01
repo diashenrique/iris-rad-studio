@@ -178,10 +178,49 @@ var createDefaultCRUDForm = function () {
           showBorders: true,
           columnsAutoWidth: true,
           columnHidingEnabled: true,
+          allowColumnResizing: true,
+          showColumnLines: true,
+          showRowLines: true,
+          rowAlternationEnabled: true,
+          hoverStateEnabled: true,
+          showBorders: true,
+          paging: {
+            pageSize: 10
+          },
+          pager: {
+            showPageSizeSelector: true,
+            allowedPageSizes: [10, 20, 30, 40, 50, 100],
+            showInfo: true
+          },
+          sorting: {
+            mode: "multiple"
+          },
+          filterRow: {
+            visible: true,
+            applyFilter: "auto"
+          },
+          filterPanel: {
+            visible: true
+          },
           searchPanel: {
             visible: true,
             width: 240,
             placeholder: "Search..."
+          },
+          headerFilter: {
+            visible: true
+          },
+          grouping: {
+            expandMode: "rowClick",
+            autoExpandAll: true,
+            allowCollapsing: true
+          },
+          groupPanel: {
+            visible: true,
+            allowColumnDragging: true
+          },
+          columnChooser: {
+            enabled: true
           },
           export: {
             enabled: true
