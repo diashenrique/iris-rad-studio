@@ -32,60 +32,60 @@ $(document).ready(function () {
   }
 });
 
-var createFormSelector = () => 
-$.ajax({
-  url: formsUrl,
-  method: "GET",
-  processData: false,
-  contentType: "application/json",
-  error: (jqXHR, textStatus, errorThrown) => {
-    console.log(jqXHR.status, textStatus, errorThrown);
-    return true;
-  },
-  complete: (resp) => {
-    var forms = resp.responseJSON;
-    // creation of submenus for forms
-    $('#menu-forms').html(forms.map(form => {
-      return `
+var createFormSelector = () =>
+  $.ajax({
+    url: formsUrl,
+    method: "GET",
+    processData: false,
+    contentType: "application/json",
+    error: (jqXHR, textStatus, errorThrown) => {
+      console.log(jqXHR.status, textStatus, errorThrown);
+      return true;
+    },
+    complete: (resp) => {
+      var forms = resp.responseJSON;
+      // creation of submenus for forms
+      $('#menu-forms').html(forms.map(form => {
+        return `
       <li class="menu-item">
         <a href="rad.html?formName=${form.class}" class="menu-link">${form.name}</a>
       </li>`
-    }))
-    if (!formName) {
-      // creation of items on main widget
-      $("#form-selector").dxTileView({
-        items: forms,
-        direction: "vertical",
-        itemTemplate: function (itemData, itemIndex, itemElement) {
-          itemElement.append(
-            `<div>${itemData.name}</div>
+      }))
+      if (!formName) {
+        // creation of items on main widget
+        $("#form-selector").dxTileView({
+          items: forms,
+          direction: "vertical",
+          itemTemplate: function (itemData, itemIndex, itemElement) {
+            itemElement.append(
+              `<div>${itemData.name}</div>
             <div id=\"button-remove-form-${itemIndex}\"></div>`
-          );
-          $(`#button-remove-form-${itemIndex}`).dxButton({
+            );
+            $(`#button-remove-form-${itemIndex}`).dxButton({
               icon: "trash",
-              onClick: function(dxEvt) {
+              onClick: function (dxEvt) {
                 removeForm(itemData.class)
-                .then(() => {
-                  notify("Form deleted");
-                  createFormSelector();
-                })
-                .fail(() => {
-                  notify("Error in form deleting", "error")
-                });
+                  .then(() => {
+                    notify("Form deleted");
+                    createFormSelector();
+                  })
+                  .fail(() => {
+                    notify("Error in form deleting", "error")
+                  });
               }
-          });
-        },
-        onItemClick: (dxEvt) => {
-          if ($(dxEvt.event.target).hasClass('dx-tile-content')) {
-            window.location.href = `${window.location.href}?formName=${dxEvt.itemData.class}`;
+            });
+          },
+          onItemClick: (dxEvt) => {
+            if ($(dxEvt.event.target).hasClass('dx-tile-content')) {
+              window.location.href = `${window.location.href}?formName=${dxEvt.itemData.class}`;
+            }
           }
-        }
-      });
+        });
+      }
     }
-  }
-});
+  });
 
-var removeForm = function(formName) {
+var removeForm = function (formName) {
   var removeFormUrl = `${urlREST}/${formName}`;
   return sendRequest(removeFormUrl, 'DELETE');
 }
@@ -182,6 +182,9 @@ var createDefaultCRUDForm = function () {
             visible: true,
             width: 240,
             placeholder: "Search..."
+          },
+          export: {
+            enabled: true
           },
           columns: cols,
         };
