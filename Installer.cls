@@ -20,7 +20,7 @@ XData setup
     <Configuration>
       <Database Name="${DBNAME}" Dir="${APPPATH}data" Create="yes" Resource="${RESOURCE}" MountAtStartup="true"/>
     </Configuration>
-    <CSPApplication Url="${CSPURL}" Directory="${APPPATH}src/csp/" ServeFiles="1" Recurse="1" Grant="%DB_${NAMESPACE},%SQL" AuthenticationMethods="32" />
+    <CSPApplication Url="${CSPURL}" Directory="${APPPATH}csp/" ServeFiles="1" Recurse="1" Grant="%DB_${NAMESPACE},%SQL" AuthenticationMethods="32" />
     <Import File="${SOURCESPATH}/cls" Recurse="1"/>
   </Namespace>
   

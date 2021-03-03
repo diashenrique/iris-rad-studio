@@ -49,6 +49,10 @@ RUN \
   set webProperties("MatchRoles") = ":%DB_%DEFAULT" \
   set webProperties("DispatchClass") = "dc.irisrad.rest.Main" \
   set sc = ##class(Security.Applications).Modify(webName, .webProperties) \
+  write "Modify /csp/irisapp application path...",! \
+  set webName = "/csp/irisapp" \
+  set webProperties("Path") = "/opt/irisapp/src/csp/" \
+  set sc = ##class(Security.Applications).Modify(webName, .webProperties) \
   # if sc<1 write $SYSTEM.OBJ.DisplayError(sc) \
   write "Add Role for CSPSystem User...",! \
   set sc=##class(Security.Users).AddRoles("CSPSystem","%DB_%DEFAULT") \ 
