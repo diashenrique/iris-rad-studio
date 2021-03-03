@@ -8,8 +8,8 @@ XData setup
 <Manifest>
   <Default Name="NAMESPACE" Value="IRISAPP"/>
   <Default Name="DBNAME" Value="IRISAPP"/>
-  <Default Name="APPPATH" Dir="/opt/irisapp/src/" />
-  <Default Name="SOURCESPATH" Dir="${APPPATH}" />
+  <Default Name="APPPATH" Dir="/opt/irisapp/" />
+  <Default Name="SOURCESPATH" Dir="${APPPATH}src" />
   <Default Name="CSPURL" Value="/csp/irisapp" /> 
   <Default Name="RESOURCE" Value="%DB_${DBNAME}" /> 
   <Default Name="RESTPATH" Value="/csp/irisapp/api" /> 
@@ -20,7 +20,7 @@ XData setup
     <Configuration>
       <Database Name="${DBNAME}" Dir="${APPPATH}data" Create="yes" Resource="${RESOURCE}" MountAtStartup="true"/>
     </Configuration>
-    <CSPApplication Url="${CSPURL}" Directory="${APPPATH}csp/" ServeFiles="1" Recurse="1" Grant="%DB_${NAMESPACE},%SQL" AuthenticationMethods="32" />
+    <CSPApplication Url="${CSPURL}" Directory="${APPPATH}src/csp/" ServeFiles="1" Recurse="1" Grant="%DB_${NAMESPACE},%SQL" AuthenticationMethods="32" />
     <Import File="${SOURCESPATH}/cls" Recurse="1"/>
   </Namespace>
   
