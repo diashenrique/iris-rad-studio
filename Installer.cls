@@ -9,7 +9,7 @@ XData setup
   <Default Name="NAMESPACE" Value="IRISAPP"/>
   <Default Name="DBNAME" Value="IRISAPP"/>
   <Default Name="APPPATH" Dir="/opt/irisapp/src/" />
-  <Default Name="SOURCESPATH" Dir="${APPPATH}src" />
+  <Default Name="SOURCESPATH" Dir="${APPPATH}" />
   <Default Name="CSPURL" Value="/csp/irisapp" /> 
   <Default Name="RESOURCE" Value="%DB_${DBNAME}" /> 
   <Default Name="RESTPATH" Value="/csp/irisapp/api" /> 
