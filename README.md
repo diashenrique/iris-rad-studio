@@ -1,6 +1,6 @@
 
 # IRIS RAD Studio
-IRIS RAD Studio it's a toolkit that came to make the developer's life easier—allowing everyone to create their CRUD based on a simple class definition or even a CSV file.  
+IRIS RAD Studio it's a low-code solution that came to make the developer's life easier; Allowing everyone to create their CRUD based on a simple class definition or even a CSV file.  
 
 ## Prerequisites
 Make sure you have [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [Docker desktop](https://www.docker.com/products/docker-desktop) installed.
