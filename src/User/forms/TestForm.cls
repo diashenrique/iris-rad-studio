@@ -9,7 +9,7 @@ Property children As list Of Form.Test.Person(%JSONINCLUDE = "INOUT", %JSONREFER
 
 Parameter DISPLAYPROPERTY = "name";
 
-Parameter FORMNAME = "FormTest";
+// Parameter FORMNAME = "Form Test";
 
 Parameter OBJPERMISSIONS = "CRUD";
 

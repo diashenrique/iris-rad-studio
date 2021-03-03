@@ -11,7 +11,7 @@ Property completed As %Library.Boolean(%JSONINCLUDE = "INOUT", %JSONREFERENCE = 
 
 Parameter DISPLAYPROPERTY = "text";
 
-Parameter FORMNAME = "FormTest";
+// Parameter FORMNAME = "My tasks";
 
 Parameter OBJPERMISSIONS = "CRUD";
 
