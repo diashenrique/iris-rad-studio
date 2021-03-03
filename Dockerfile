@@ -49,6 +49,7 @@ RUN \
   set webProperties("MatchRoles") = ":%DB_%DEFAULT" \
   set webProperties("DispatchClass") = "dc.irisrad.rest.Main" \
   set sc = ##class(Security.Applications).Modify(webName, .webProperties) \
+  kill webProperties \
   write "Modify /csp/irisapp application path...",! \
   set webName = "/csp/irisapp" \
   set webProperties("Path") = "/opt/irisapp/src/csp/" \
