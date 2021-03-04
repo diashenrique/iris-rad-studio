@@ -243,42 +243,69 @@ var createDefaultCRUDForm = function () {
   });
 }
 
+var createFormDataStore = (lookupForm) => {
+  return new DevExpress.data.CustomStore({
+    key: "_id",
+    load: function () {
+      console.log(`${urlREST}/objects/${lookupForm}/info`);
+      return sendRequest(`${urlREST}/objects/${lookupForm}/info`);
+    },
+    byKey: function (key) {
+      console.log(`${urlREST}/objects/${lookupForm}/${key}`);
+      return sendRequest(`${urlREST}/object/${lookupForm}/${key}`);
+    }
+  });
+}
+
 var createFormField = (rf2Field) => {
+  // Default field
   var objCol = {
     dataField: rf2Field.name,
     caption: rf2Field.displayName,
     dataType: getDevExtremeFieldType(rf2Field)
   }
 
+  // Password field
   if (rf2Field.type === FieldType.Password) {
     objCol.editorOptions = {
       mode: 'password'
     }
   }
 
+  // Multiple Form selection field
+  if (getPropType(rf2Field) === FieldType.List && rf2Field.category === 'form') {
+    var lookupForm = rf2Field.type;
+    objCol.editCellTemplate = getTagBoxEditorTemplate(lookupForm);
+  }
+
+  // Single Form selection field
   if (getPropType(rf2Field) == FieldType.Form) {
-    console.log("Campo relacionado ", objCol);
     var lookupForm = rf2Field.type;
     var fieldValue = rf2Field.name.valueOf();
     objCol.lookup = {
       dataSource: {
-        store: new DevExpress.data.CustomStore({
-          key: "_id",
-          load: function () {
-            console.log(`${urlREST}/objects/${lookupForm}/info`);
-            return sendRequest(`${urlREST}/objects/${lookupForm}/info`);
-          },
-          byKey: function (key) {
-            console.log(`${urlREST}/objects/${lookupForm}/${key}`);
-            return sendRequest(`${urlREST}/object/${lookupForm}/${key}`);
-          }
-        })
+        store: createFormDataStore(lookupForm)
       },
       valueExpr: "_id",
       displayExpr: "displayName"
     }
-
   };
 
   return objCol;
+}
+
+var getTagBoxEditorTemplate = function(lookupForm) {
+  return function (cellElement, cellInfo) {
+    return $("<div>").dxTagBox({
+        dataSource: createFormDataStore(lookupForm),
+        value: cellInfo.value,
+        valueExpr: "_id",
+        displayExpr: "displayName",
+        showSelectionControls: true,
+        maxDisplayedTags: 3,
+        showMultiTagOnly: false,
+        applyValueMode: "useButtons",
+        searchEnabled: true
+    });
+  }
 }
