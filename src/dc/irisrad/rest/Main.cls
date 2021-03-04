@@ -27,6 +27,11 @@ XData UrlMap [ XMLNamespace = "http://www.intersystems.com/urlmap" ]
 <Route Url="/form/object/:form/:id" Method="PUT" Call="updateFormDynamicObject"/>
 <Route Url="/form/object/:form/:id" Method="DELETE" Call="deleteFormObject"/>
 
+<!-- Create RESTForms classes using RAD Interface -->
+<Route Url="/form/class/lookup" Method="GET" Call="dc.irisrad.CreationUtility:ListClasses" />
+<Route Url="/form/class/:id" Method="GET" Call="dc.irisrad.CreationUtility:GetClassById" />
+<Route Url="/form/class/fields/:id" Method="GET" Call="dc.irisrad.CreationUtility:GetFields" />
+
 <!-- Original Form.REST.Main redirections -->
 <Map Prefix="/form" Forward="Form.REST.Form"/>
 
