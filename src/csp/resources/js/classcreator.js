@@ -36,8 +36,9 @@ $(document).ready(function () {
         onClick: function () {
           $("#divProperties").hide();
           form.resetValues();
+          form.option("readOnly", false);
           selectSearch.option("value", "");
-          DevExpress.ui.notify("New class button has been clicked!");
+          dataGrid.option("dataSource", []);
         }
       }
     }, {
@@ -61,7 +62,25 @@ $(document).ready(function () {
         text: "Delete",
         type: "danger",
         onClick: function () {
-          DevExpress.ui.notify("Delete button has been clicked!");
+          var dataForm = form.option("formData");
+
+          if (jQuery.isEmptyObject(dataForm) == true) {
+            DevExpress.ui.notify("No class selected", "error", 4000);
+          } else {
+            $.ajax({
+              url: `${urlREST}/class/${encodeURIComponent(dataForm.ID)}`,
+              method: "DELETE"
+            }).done(function (returnDelete) {
+              storeSelectBox.reload();
+              $("#divProperties").hide();
+              form.resetValues();
+              form.option("readOnly", false);
+              selectSearch.option("value", "");
+              dataGrid.option("dataSource", []);
+              DevExpress.ui.notify("Class " + returnDelete[0].ClassName + " has been deleted successfully", "info", 4000);
+            });
+          }
+
         }
       }
     }]
@@ -73,11 +92,15 @@ $(document).ready(function () {
     valueExpr: "ID",
     searchEnabled: true,
     onValueChanged: function (data) {
-      var pIdSelected = data.value;
-      console.log("pIdSelected", pIdSelected);
-      formDataValue(pIdSelected);
-      $("#divProperties").show();
-      dataGrid.getDataSource().reload();
+      pIdSelected = data.value;
+      console.log(pIdSelected);
+      if (pIdSelected != "") {
+        formDataValue(pIdSelected);
+        form.option("readOnly", true);
+        $("#divProperties").show();
+        dataGrid.getDataSource().reload();
+        $("#dataGridLine").dxDataGrid("instance").option("dataSource", createCustomStore);
+      }
     }
   }).dxSelectBox("instance");
 
@@ -86,8 +109,31 @@ $(document).ready(function () {
     type: "default",
     text: "Save",
     onClick: function (e) {
-      $("#divProperties").show();
-      DevExpress.ui.notify("Save Class");
+      if (!form.validate().isValid) {
+        DevExpress.ui.notify("There are required fields not filled in", "error", 4000);
+      } else {
+        var dataForm = form.option("formData");
+
+        $.ajax({
+          url: `${urlREST}/class`,
+          method: "POST",
+          processData: false,
+          contentType: "application/json",
+          data: JSON.stringify(dataForm)
+        }).done(function (retSaveClass) {
+          //console.log(retSaveClass[0].ID);
+
+          storeSelectBox.reload();
+          $("#select-class").dxSelectBox("instance").option("value", retSaveClass[0].ID);
+
+
+          var resultados = form.option('formData');
+          console.log(resultados);
+          DevExpress.ui.notify("Class has been saved", "success", 4000);
+        });
+
+        $("#divProperties").show();
+      }
     }
   });
 
@@ -95,13 +141,12 @@ $(document).ready(function () {
     store: new DevExpress.data.CustomStore({
       key: "ID",
       load: function () {
-        if (pIdSelected == "") {
-          return []
-        }
-        console.log(pIdSelected);
-        return $.getJSON(`${urlREST}/class/fields/${encodeURIComponent(`${pIdSelected}`)}`);
+          return $.getJSON(`${urlREST}/class/fields/${encodeURIComponent(pIdSelected)}`,function(e){
+            console.log(e);
+          });
       },
       insert: function (values) {
+        values.ParentClass = pIdSelected;
         return $.ajax({
           url: `${urlREST}/class/fields`,
           method: "POST",
@@ -134,35 +179,20 @@ $(document).ready(function () {
   });
 
   var dataGrid = $("#dataGridLine").dxDataGrid({
-    dataSource: createCustomStore,
+    //dataSource: createCustomStore,
+    dataSource: [],
     rowAlternationEnabled: true,
     allowColumnResizing: true,
     columnResizingMode: "widget",
     columnAutoWidth: true,
     showBorders: true,
     editing: {
-      refreshMode: "reshape",
       mode: "row",
       allowAdding: true,
       allowUpdating: true,
       allowDeleting: true
     },
-    columns: [{
-        dataField: "ParentClass",
-        lookup: {
-          dataSource: {
-            store: new DevExpress.data.CustomStore({
-              key: "ID",
-              loadMode: "raw",
-              load: function () {
-                return $.getJSON(`${urlREST}/class/lookup`);
-              }
-            })
-          },
-          valueExpr: "ID",
-          displayExpr: "ClassName"
-        }
-      },
+    columns: [
       {
         dataField: "FieldName"
       },
@@ -189,22 +219,15 @@ $(document).ready(function () {
       }*/
     ],
     onEditorPrepared: function (options) {
-      if (options.parentType == "dataRow" && options.dataField == "ParentClass") {
-        var idClass = $("#select-class").dxSelectBox("instance").option("value");
-        options.editorElement.dxSelectBox('instance').option('value', idClass);
-      }
-    },
-    onEditorPreparing: function (e) {
-      if (e.dataField == "ParentClass" && e.parentType == "dataRow") {
-        e.editorOptions.readOnly = true;
+      if (options.parentType === "dataRow" && options.dataField === "FieldType") {
+        options.editorElement.dxSelectBox("instance").option("value", fieldTypeSelectBox[0].id);
       }
     }
   }).dxDataGrid("instance");
-
 });
 
 var form = $("#formClassCreator").dxForm({
-  formData: "",
+  //formData: "",
   readOnly: false,
   showColonAfterLabel: false,
   labelLocation: "left",
@@ -212,12 +235,33 @@ var form = $("#formClassCreator").dxForm({
   colCount: "auto",
   items: [{
     dataField: "ClassName",
+    editorOptions: {
+      placeholder: "Enter class name - e.g. <Package>.<ClassName>",
+      onValueChanged: function(j) {
+        if (!j.value) {
+          return 
+        } 
+        $.getJSON(`${urlREST}/class/check/${j.value}`,function(e){
+          if (e.msg != "") {
+            DevExpress.ui.notify(e.msg, "error", 4000);
+            form.getEditor("ClassName").option("value","");
+          }
+        });
+      }
+    },
     validationRules: [{
       type: "required",
       message: "Class Name is required"
     }]
   }, {
-    dataField: "Description"
+    dataField: "Description",
+    editorOptions: {
+      placeholder: "Enter class description to be used as Form Name"
+    },
+    validationRules: [{
+      type: "required",
+      message: "Description is required"
+    }]
   }]
 }).dxForm("instance");
 
@@ -242,8 +286,10 @@ function formDataValue(pId) {
   form.option("formData", retFormData[0]);
 };
 
-
 var fieldTypeSelectBox = [{
+    "id": "%Library.String",
+    "name": "%Library.String"
+  }, {
     "id": "%Library.BigInt",
     "name": "%Library.BigInt"
   },
@@ -290,10 +336,6 @@ var fieldTypeSelectBox = [{
   {
     "id": "%Library.SmallInt",
     "name": "%Library.SmallInt"
-  },
-  {
-    "id": "%Library.String",
-    "name": "%Library.String"
   },
   {
     "id": "%Library.Time",

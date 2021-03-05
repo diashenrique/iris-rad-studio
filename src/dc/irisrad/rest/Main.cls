@@ -30,7 +30,14 @@ XData UrlMap [ XMLNamespace = "http://www.intersystems.com/urlmap" ]
 <!-- Create RESTForms classes using RAD Interface -->
 <Route Url="/form/class/lookup" Method="GET" Call="dc.irisrad.CreationUtility:ListClasses" />
 <Route Url="/form/class/:id" Method="GET" Call="dc.irisrad.CreationUtility:GetClassById" />
+<Route Url="/form/class/check/:name" Method="GET" Call="dc.irisrad.CreationUtility:CheckClassName" />
 <Route Url="/form/class/fields/:id" Method="GET" Call="dc.irisrad.CreationUtility:GetFields" />
+<Route Url="/task/:id" Method="GET" Call="diashenrique.npm.REST.Routes.Task:GetTask" Cors="true"/>
+<Route Url="/form/class" Method="POST" Call="dc.irisrad.CreationUtility:CreateClass" Cors="true"/>
+<Route Url="/form/class/:id" Method="DELETE" Call="dc.irisrad.CreationUtility:DeleteClass" Cors="true"/>
+<Route Url="/form/class/fields" Method="POST" Call="dc.irisrad.CreationUtility:CreateField" Cors="true"/>
+<Route Url="/form/class/fields/:id" Method="PUT" Call="dc.irisrad.CreationUtility:UpdateField" />
+<Route Url="/form/class/fields/:id" Method="DELETE" Call="dc.irisrad.CreationUtility:DeleteField" />
 
 <!-- Original Form.REST.Main redirections -->
 <Map Prefix="/form" Forward="Form.REST.Form"/>

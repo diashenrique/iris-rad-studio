@@ -1,4 +1,4 @@
-Class dc.irisrad.CreationUtility Extends %CSP.REST
+Class dc.irisrad.CreationUtility Extends Form.REST.Abstract
 {
 
 /// Return the list of class created using RAD Studio
@@ -46,6 +46,40 @@ ClassMethod ListClasses() As %Status
     Return sc
 }
 
+ClassMethod CheckClassName(pName) As %Status
+{
+   
+    Set sc = $$$OK
+
+    set array = []
+
+    Try {
+
+		Set oRS = ##class(%SQL.Statement).%New()
+
+        Set sql = "SELECT ID FROM dc_irisrad_data.ClassCreation WHERE ClassName = '"_pName_"'"
+
+        Set sc = oRS.%Prepare(sql)
+
+        Quit:$System.Status.IsError(sc)
+
+        Set result = oRS.%Execute()
+
+        If (result.%SQLCODE '< 0) {
+            set json = {"msg":"Class already exists"}
+        }
+        Else {
+            set json = {"msg":""}
+        }
+    }
+    Catch (oException) {
+        Set sc = oException.AsStatus()
+    }
+    
+    write json.%ToJSON()
+    Return sc
+}
+
 ClassMethod GetFields(pId) As %Status
 {
     Set %response.ContentType = "application/json"
@@ -58,7 +92,11 @@ ClassMethod GetFields(pId) As %Status
 
 		Set oRS = ##class(%SQL.Statement).%New()
 
-        Set sql = "SELECT ID, ParentClass, FieldName, FieldType, DisplayName, IsRequired, ClassRelated FROM dc_irisrad_data.ClassLineCreation"
+        Set sql = "SELECT ID, ParentClass, FieldName, FieldType, DisplayName, IsRequired, ClassRelated "_
+        "FROM dc_irisrad_data.ClassLineCreation " 
+        if (pId '="") {
+            set sql= sql_"WHERE ParentClass = '"_pId_"'" 
+        }
 
         Set sc = oRS.%Prepare(sql)
 
@@ -134,6 +172,178 @@ ClassMethod GetClassById(pId) As %Status
     Write array.%ToJSON() 
     
     Return sc
+}
+
+ClassMethod UpdateField(id As %Integer) As %Status
+{
+    Set obj = ##class(%DynamicObject).%FromJSON(%request.Content)
+
+    Set objClassField = ##class(diashenrique.npm.Data.Task).%OpenId(id)
+
+    If '$IsObject(objClassField) {
+        Set %response.Status = ..#HTTP404NOTFOUND
+        Quit $$$OK
+    }
+
+    Set iter = obj.%GetIterator()
+    While iter.%GetNext(.key , .value )  {
+        Set ^zHGD($ZName,"Update",key) = value
+        Set $Property(objClassField, key) = value
+    }
+
+    Set tSC = objClassField.%Save()
+
+    If $$$ISERR(tSC) {
+        Quit $System.OBJ.DisplayError(tSC)
+    }
+
+    Quit $$$OK
+}
+
+ClassMethod DeleteClass(id As %Integer) As %Status
+{
+    if '##class(dc.irisrad.data.ClassCreation).%ExistsId(id) {
+        set %responde.Status = ..#HTTP404NOTFOUND
+        quit $$$OK	
+    }
+
+    set objClass = ##class(dc.irisrad.data.ClassCreation).%OpenId(id)
+
+    set sc = ##class(dc.irisrad.data.ClassCreation).%DeleteId(id)
+
+    if $$$ISOK(sc) {
+        
+        set arrResponse = []
+        set jsonResponse = {}
+
+        do jsonResponse.%Set("ClassName",objClass.ClassName)
+        do arrResponse.%Push(jsonResponse)
+        
+        write arrResponse.%ToJSON()
+
+        try {
+
+            set oRS = ##class(%SQL.Statement).%New()
+            
+            set sql = "SELECT ID FROM dc_irisrad_data.ClassLineCreation WHERE ParentClass = "_id
+
+            set sc = oRS.%Prepare(sql)
+
+            quit:$System.Status.IsError(sc)
+
+            set result = oRS.%Execute()
+
+            if (result.%SQLCODE '< 0) {
+                While result.%Next() { 
+                    do ..DeleteField(result.ID)
+                }
+            }
+            Else {
+                Throw ##class(%Exception.SQL).CreateFromSQLCODE(result.%SQLCODE,result.%Message)
+            }
+        }
+        Catch (oException) {
+            Set sc = oException.AsStatus()
+        }
+    }
+
+    quit $$$OK
+}
+
+/// Delete from %Dictionary.ClassDefinition
+ClassMethod DeleteDictionaryClassDefinition() As %Status
+{
+    Set sc = $$$OK
+    
+    If '##class(%Dictionary.ClassDefinition).%ExistsId(id) {
+        quit sc
+    }
+
+    set sc = ##class(%Dictionary.ClassDefinition).%DeleteId(id)
+    
+    quit sc
+}
+
+ClassMethod DeleteField(id As %Integer) As %Status
+{
+    If '##class(dc.irisrad.data.ClassLineCreation).%ExistsId(id) {
+        Set %responde.Status = ..#HTTP404NOTFOUND
+        Quit $$$OK	
+    }
+
+    set objClassField = ##class(dc.irisrad.data.ClassLineCreation).%OpenId(id)
+    do ##class(dc.irisrad.data.ClassLineCreation).%DeleteId(id)
+
+    set arrResponse = []
+    set jsonResponse = {}
+
+    do jsonResponse.%Set("FieldName",objClassField.FieldName)
+    do arrResponse.%Push(jsonResponse)
+    
+    write arrResponse.%ToJSON()
+
+    Quit $$$OK
+}
+
+ClassMethod CreateField() As %Status
+{
+    set tSC = $$$OK
+
+    Set obj = ##class(%DynamicAbstractObject).%FromJSON(%request.Content)
+
+    Set objClassField = ##class(dc.irisrad.data.ClassLineCreation).%New()
+
+    Set objClassField.ParentClass = ##class(dc.irisrad.data.ClassCreation).%OpenId(obj.ParentClass)
+    Set objClassField.FieldName = obj.FieldName
+    Set objClassField.FieldType = obj.FieldType
+    Set objClassField.IsRequired = obj.IsRequired
+    Set objClassField.DisplayName = obj.DisplayName
+    //Set objClassField.ClassRelated = obj.ClassRelated
+    Set tSC = objClassField.%Save()
+
+    if $$$ISOK(tSC) {
+        set arrResponse = []
+        set jsonResponse = {}
+
+        do jsonResponse.%Set("ParentClass",obj.ParentClass)
+        do jsonResponse.%Set("FieldName",obj.FieldName)
+        do jsonResponse.%Set("FieldType",obj.FieldType)
+        do jsonResponse.%Set("IsRequired",obj.IsRequired)
+        do jsonResponse.%Set("DisplayName",obj.DisplayName)
+        do arrResponse.%Push(jsonResponse)
+
+        write arrResponse.%ToJSON()
+    }
+
+    Quit tSC
+}
+
+ClassMethod CreateClass() As %Status
+{
+    set tSC = $$$OK
+    
+    Set obj = ##class(%DynamicAbstractObject).%FromJSON(%request.Content)
+
+    Set objClass = ##class(dc.irisrad.data.ClassCreation).%New()
+
+    Set objClass.ClassName = obj.ClassName
+    Set objClass.Description = obj.Description
+    
+    set tSC = objClass.%Save()
+
+    if $$$ISOK(tSC) {
+        set arrResponse = []
+        set jsonResponse = {}
+
+        do jsonResponse.%Set("ID",$number(objClass.%Id()))
+        do jsonResponse.%Set("ClassName",objClass.ClassName)
+        do jsonResponse.%Set("Description",objClass.Description)
+        do arrResponse.%Push(jsonResponse)
+        
+        write arrResponse.%ToJSON()
+    }
+
+    Quit tSC
 }
 
 }
