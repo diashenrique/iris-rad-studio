@@ -294,7 +294,7 @@ ClassMethod CreateField() As %Status
     Set objClassField = ##class(dc.irisrad.data.ClassLineCreation).%New()
 
     Set objClassField.ParentClass = ##class(dc.irisrad.data.ClassCreation).%OpenId(obj.ParentClass)
-    Set objClassField.FieldName = obj.FieldName
+    Set objClassField.FieldName = $ZSTRIP(obj.FieldName,"*W")
     Set objClassField.FieldType = obj.FieldType
     Set objClassField.IsRequired = obj.IsRequired
     Set objClassField.DisplayName = obj.DisplayName
@@ -326,7 +326,7 @@ ClassMethod CreateClass() As %Status
 
     Set objClass = ##class(dc.irisrad.data.ClassCreation).%New()
 
-    Set objClass.ClassName = obj.ClassName
+    Set objClass.ClassName = $ZSTRIP(obj.ClassName,"*W")
     Set objClass.Description = obj.Description
     
     set tSC = objClass.%Save()
@@ -344,6 +344,94 @@ ClassMethod CreateClass() As %Status
     }
 
     Quit tSC
+}
+
+/// Compile class to generate a RESTForms2 model
+ClassMethod CompileClass(pId) As %Status
+{
+   
+    ;Set %response.ContentType = "application/json"
+    
+    Set sc = $$$OK
+
+    &sql(SELECT ClassName, Description INTO :tClassName, :tDescription FROM dc_irisrad_data.ClassCreation WHERE ID = :pId)
+
+    if (SQLCODE=0) {
+        
+        set jsonClass = { }
+        do jsonClass.%Set("name",tClassName)
+        do jsonClass.%Set("displayFormName",tDescription)
+        
+        // Getting fields details
+        Set arrayFields = []
+        Try {
+            Set oRS = ##class(%SQL.Statement).%New()
+            
+            Set sql = "SELECT ID, ClassRelated, DisplayName, FieldName, FieldType, IsRequired "_
+                      "FROM dc_irisrad_data.ClassLineCreation WHERE ParentClass = "_pId
+            
+            Set sc = oRS.%Prepare(sql)
+            quit:$System.Status.IsError(sc)
+            Set result = oRS.%Execute()
+            set count = 0
+            
+            If (result.%SQLCODE '< 0) {
+                While result.%Next() {
+                    Set jsonFields = {}
+                    if (count=0){
+                        set count=$increment(count)
+                        do jsonClass.%Set("displayProperty",result.FieldName)
+                    }
+                    do jsonFields.%Set("name",result.FieldName)
+                    do jsonFields.%Set("displayName",result.DisplayName)
+                    do jsonFields.%Set("type",result.FieldType)
+                    if (result.IsRequired = 1) {
+                        set tIsRequired = "true"
+                    } else {
+                        set tIsRequired = "false"
+                    }
+                    do jsonFields.%Set("required",tIsRequired,"boolean")
+                    do arrayFields.%Push(jsonFields)
+                }
+            }
+            Else {
+                Throw ##class(%Exception.SQL).CreateFromSQLCODE(result.%SQLCODE,result.%Message)
+            }
+        }
+        Catch (oException) {
+            Set sc = oException.AsStatus()
+        }
+
+        do jsonClass.%Set("fields",arrayFields)
+        set sc = ..CreateForm(jsonClass.%ToJSON())
+        if $$$ISOK(sc) {
+            set json = {"msg":"Class has been compiled successfully"}
+            write json.%ToJSON()
+        }
+    }
+    
+    Return sc
+}
+
+/// Create the Form 
+ClassMethod CreateForm(pObject As %Library.DynamicObject) As %Status
+{
+    Set sc = $$$OK
+   
+    Try {
+        Set body = {}.%FromJSON(pObject)
+        Set form = ##class(dc.irisrad.Form).%New()
+        Set form.Name = body.name
+        Set form.DisplayFormName = body.displayFormName
+        Set form.DisplayField = body.displayProperty
+        Set form.Fields = body.fields
+        $$$TOE(sc, form.Save())
+    }
+    Catch ex {
+        Set sc = ex.AsStatus()
+    }
+
+    Return sc
 }
 
 }

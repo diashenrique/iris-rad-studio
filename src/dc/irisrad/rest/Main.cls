@@ -38,6 +38,7 @@ XData UrlMap [ XMLNamespace = "http://www.intersystems.com/urlmap" ]
 <Route Url="/form/class/fields" Method="POST" Call="dc.irisrad.CreationUtility:CreateField" Cors="true"/>
 <Route Url="/form/class/fields/:id" Method="PUT" Call="dc.irisrad.CreationUtility:UpdateField" />
 <Route Url="/form/class/fields/:id" Method="DELETE" Call="dc.irisrad.CreationUtility:DeleteField" />
+<Route Url="/form/class/compile/:id" Method="POST" Call="dc.irisrad.CreationUtility:CompileClass" />
 
 <!-- Original Form.REST.Main redirections -->
 <Map Prefix="/form" Forward="Form.REST.Form"/>

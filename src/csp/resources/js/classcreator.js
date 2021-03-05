@@ -50,7 +50,16 @@ $(document).ready(function () {
         text: "Compile",
         type: "default",
         onClick: function () {
-          DevExpress.ui.notify("Compile button has been clicked!");
+          $.ajax({
+            url: `${urlREST}/class/compile/${encodeURIComponent(pIdSelected)}`,
+            method: "POST",
+            processData: false,
+            contentType: "application/json",
+            data: JSON.stringify(pIdSelected)
+          }).done(function (e) {
+            DevExpress.ui.notify(e.msg, "success", 4000);
+          });
+
         }
       }
     }, {
@@ -114,6 +123,8 @@ $(document).ready(function () {
       } else {
         var dataForm = form.option("formData");
 
+        console.log(dataForm);
+
         $.ajax({
           url: `${urlREST}/class`,
           method: "POST",
@@ -121,14 +132,8 @@ $(document).ready(function () {
           contentType: "application/json",
           data: JSON.stringify(dataForm)
         }).done(function (retSaveClass) {
-          //console.log(retSaveClass[0].ID);
-
           storeSelectBox.reload();
           $("#select-class").dxSelectBox("instance").option("value", retSaveClass[0].ID);
-
-
-          var resultados = form.option('formData');
-          console.log(resultados);
           DevExpress.ui.notify("Class has been saved", "success", 4000);
         });
 
@@ -141,9 +146,9 @@ $(document).ready(function () {
     store: new DevExpress.data.CustomStore({
       key: "ID",
       load: function () {
-          return $.getJSON(`${urlREST}/class/fields/${encodeURIComponent(pIdSelected)}`,function(e){
-            console.log(e);
-          });
+        return $.getJSON(`${urlREST}/class/fields/${encodeURIComponent(pIdSelected)}`, function (e) {
+          console.log(e);
+        });
       },
       insert: function (values) {
         values.ParentClass = pIdSelected;
@@ -192,8 +197,7 @@ $(document).ready(function () {
       allowUpdating: true,
       allowDeleting: true
     },
-    columns: [
-      {
+    columns: [{
         dataField: "FieldName"
       },
       {
@@ -236,8 +240,8 @@ var form = $("#formClassCreator").dxForm({
   items: [{
     dataField: "ClassName",
     editorOptions: {
-      placeholder: "Enter class name - e.g. <Package>.<ClassName>",
-      onValueChanged: function(j) {
+      placeholder: "Enter class name - e.g. <Package>.<ClassName>"
+      /*,onValueChanged: function(j) {
         if (!j.value) {
           return 
         } 
@@ -247,7 +251,7 @@ var form = $("#formClassCreator").dxForm({
             form.getEditor("ClassName").option("value","");
           }
         });
-      }
+      }*/
     },
     validationRules: [{
       type: "required",
