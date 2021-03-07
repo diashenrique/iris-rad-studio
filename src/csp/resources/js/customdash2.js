@@ -159,6 +159,9 @@ var createDefaultCRUDForm = function () {
     complete: (resp) => {
       var rf2FormInfo = resp.responseJSON;
       var cols = rf2FormInfo.fields.map(rf2Field => createFormField(rf2Field));
+      
+      var formDescription = rf2FormInfo.name
+      $("#divFormName").text(` ${formDescription}`);
 
       if (rf2FormInfo.toolbarUIDef) {
         // todo: fix this security threat
