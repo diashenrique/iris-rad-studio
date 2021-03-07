@@ -15,6 +15,8 @@ Parameter FORMNAME = "Users";
 
 Parameter OBJPERMISSIONS = "CRUD";
 
+Index idxUsername On username [ Unique ];
+
 ClassMethod Hash(pValue As %String) As %String
 {
   Return $SYSTEM.Encryption.Base64Encode($SYSTEM.Encryption.SHA1Hash(pValue))

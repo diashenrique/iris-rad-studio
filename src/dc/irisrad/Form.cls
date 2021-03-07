@@ -176,4 +176,19 @@ ClassMethod FlattenList(pList As %List) As %List [ SqlProc ]
   Return result
 }
 
+/// TODO: move to a util class
+ClassMethod toJSON(className As %String, id As %Integer = "", property As %String = "") As %String [ SqlProc ]
+{
+	Set json = ""
+  Try {
+    Set obj = $CLASSMETHOD(className, "%OpenId", id,,.sc)
+    $$$ThrowOnError(sc)
+    $$$ThrowOnError(obj.%JSONExportToString(.json, $PARAMETER(obj,"FORMREADMAPPING")))
+    If (property '= "") {
+      Set json = {}.%FromJSON(json).%Get(property).%ToJSON()
+    }
+  } Catch ex { }
+  Quit json
+}
+
 }

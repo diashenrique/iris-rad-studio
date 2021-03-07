@@ -305,7 +305,13 @@ var getTagBoxEditorTemplate = function(lookupForm) {
         maxDisplayedTags: 3,
         showMultiTagOnly: false,
         applyValueMode: "useButtons",
-        searchEnabled: true
+        searchEnabled: true,
+        onValueChanged: function(e) {
+            cellInfo.setValue(e.value)
+        },
+        onSelectionChanged: function(e) {
+            cellInfo.component.updateDimensions();
+        }
     });
   }
 }
