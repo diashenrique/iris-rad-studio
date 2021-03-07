@@ -178,7 +178,7 @@ ClassMethod UpdateField(id As %Integer) As %Status
 {
     Set obj = ##class(%DynamicObject).%FromJSON(%request.Content)
 
-    Set objClassField = ##class(diashenrique.npm.Data.Task).%OpenId(id)
+    Set objClassField = ##class(dc.irisrad.data.ClassLineCreation).%OpenId(id)
 
     If '$IsObject(objClassField) {
         Set %response.Status = ..#HTTP404NOTFOUND
@@ -195,7 +195,11 @@ ClassMethod UpdateField(id As %Integer) As %Status
 
     If $$$ISERR(tSC) {
         Quit $System.OBJ.DisplayError(tSC)
+    } else {
+        set json = {"msg":"Field updated"}
     }
+
+    write json.%ToJSON()
 
     Quit $$$OK
 }
@@ -431,6 +435,43 @@ ClassMethod CreateForm(pObject As %Library.DynamicObject) As %Status
         Set sc = ex.AsStatus()
     }
 
+    Return sc
+}
+
+/// Get Classes that extends from dc.irisrad.FormAdaptor    
+ClassMethod RelatedClassList() As %Status
+{
+    Set sc = $$$OK
+
+    set array = []
+
+    Try {
+
+		Set oRS = ##class(%SQL.Statement).%New()
+
+        Set sql = "SELECT ID, Name FROM %Dictionary.ClassDefinition WHERE  Super [ 'dc.irisrad.FormAdaptor'"
+
+        Set sc = oRS.%Prepare(sql)
+
+        Quit:$System.Status.IsError(sc)
+
+        Set result = oRS.%Execute()
+
+        If (result.%SQLCODE '< 0) {
+            While result.%Next() {
+	        	Set json = { }
+	        	do json.%Set("id",result.ID)
+	        	do json.%Set("name",result.Name)
+				Do array.%Push(json)
+            }
+        }
+    }
+    Catch (oException) {
+        Set sc = oException.AsStatus()
+    }
+    
+    write array.%ToJSON()
+    
     Return sc
 }
 
