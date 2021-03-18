@@ -27,7 +27,6 @@ RUN \
   do $system.OBJ.Load("/tmp/deps/zpm.xml", "ck") \
   zn "IRISAPP" \
   zpm "install restforms2" \
-  zpm "install restforms2-ui" \
   zpm "install dsw" \
   do EnableDeepSee^%SYS.cspServer("/csp/irisapp/") \
   zpm "install csvgen" \
@@ -41,23 +40,26 @@ RUN \
   zw sc \
   set Properties("AutheEnabled") = $ZB(Properties("AutheEnabled"),8192,7) \
   set sc = ##Class(Security.System).Modify("SYSTEM",.Properties) \
-  zw sc \
-  write "Modify forms application security...",! \
-  set webName = "/forms" \
+  write "Creating IRIS RAD rest application...",! \
+  set webName = "/irisrad" \
+  set webProperties("NameSpace") = "IRISAPP" \
+  set webProperties("IsNameSpaceDefault") = 0 \
   set webProperties("AutheEnabled") = 8224 \
-  set webProperties("CookiePath") = "/forms/" \
+  set webProperties("CookiePath") = "/irisrad/" \
   set webProperties("MatchRoles") = ":%DB_%DEFAULT" \
   set webProperties("DispatchClass") = "dc.irisrad.rest.Main" \
-  set sc = ##class(Security.Applications).Modify(webName, .webProperties) \
+  set sc = ##class(Security.Applications).Create(webName, .webProperties) \
   kill webProperties \
   write "Modify /csp/irisapp application path...",! \
   set webName = "/csp/irisapp" \
   set webProperties("Path") = "/opt/irisapp/src/csp/" \
   set sc = ##class(Security.Applications).Modify(webName, .webProperties) \
-  # if sc<1 write $SYSTEM.OBJ.DisplayError(sc) \
   write "Add Role for CSPSystem User...",! \
-  set sc=##class(Security.Users).AddRoles("CSPSystem","%DB_%DEFAULT") \ 
-  zpm "load /opt/irisapp/ -v" 
+  set sc=##class(Security.Users).AddRoles("CSPSystem","%DB_%DEFAULT") 
 
 # bringing the standard shell back
 SHELL ["/bin/bash", "-c"]
+
+USER root
+RUN chown -R irisuser:irisuser /opt
+RUN chown -R irisuser:irisuser /usr/irissys/csp/forms

@@ -9,17 +9,17 @@
   <!-- Begin SEO tag -->
   <title>RAD | IRIS Rapid Application Development</title>
   <meta property="og:title" content="RAD - IRIS Rapid Application Development" />
-  <meta name="author" content="Henrique Dias" />
+  <meta name="author" content="Henrique Dias & Jose R. Pereira Jr." />
   <meta property="og:locale" content="en_US" />
-  <meta name="description" content="Project & Task Management using InterSystems IRIS and Bootstrap 4" />
-  <meta property="og:description" content="Project & Task Management using InterSystems IRIS and Bootstrap 4" />
-  <link rel="canonical" href="https://github.com/diashenrique/" />
-  <meta property="og:url" content="https://github.com/diashenrique/" />
-  <meta property="og:site_name" content="RAD, IRIS Rapid Application Development" />
+  <meta name="description" content="InterSystems IRIS RAD - low-code made easy" />
+  <meta property="og:description" content="InterSystems IRIS RAD - low-code made easy" />
+  <link rel="canonical" href="https://github.com/diashenrique/iris-rad-studio" />
+  <meta property="og:url" content="https://github.com/diashenrique/iris-rad-studio" />
+  <meta property="og:site_name" content="RAD, IRIS Rapid Application Development, low-code" />
   <script type="application/ld+json">
     {
       "name": "RAD - InterSystems IRIS RAD",
-      "description": "Rapid Application Development"
+      "description": "Rapid Application Development, low-code made easy"
     }
   </script>
   <!-- End SEO tag -->
@@ -100,14 +100,8 @@
             <ul class="menu">
               <!-- .menu-item -->
               <li class="menu-item">
-                <a href="http://localhost:52773/restforms2-ui/index.html#/" class="menu-link">
-                  <span class="menu-icon fas fa-home"></span>
-                  <span class="menu-text">RESTForms2</span>
-                </a>
-              </li>
-              <li class="menu-item">
                 <a href="rad.html" class="menu-link">
-                  <span class="menu-icon far fa-edit"></span>
+                  <span class="menu-icon fas fa-home"></span>
                   <span class="menu-text">CRUD Extreme</span>
                 </a>
               </li>
@@ -117,50 +111,30 @@
                   <span class="menu-text">Create Class</span>
                 </a>
               </li>
-              <li class="menu-item">
+              <li class="menu-item has-active">
                 <a href="deploy.html" class="menu-link">
                   <span class="menu-icon fas fa-cloud-upload-alt"></span>
                   <span class="menu-text">Deploy app</span>
                 </a>
               </li>
-              <li class="menu-item has-active">
-                <a href="wizard.html" class="menu-link">
+              <li class="menu-item">
+                <a href="wizard.csp" class="menu-link">
                   <span class="menu-icon fas fa-cubes"></span>
                   <span class="menu-text">Import Wizard</span>
                 </a>
               </li>
               <li class="menu-item">
-                <a href="../../dsw/index.html#/IRISAPP" class="menu-link">
+                <a href="../../dsw/index.html#/IRISAPP" class="menu-link" target="_blank">
                   <span class="menu-icon fas fa-tachometer-alt"></span>
                   <span class="menu-text">DSW Dashboard</span>
                 </a>
               </li>
-              <li class="menu-item">
+              <!-- <li class="menu-item">
                 <a href="#" class="menu-link">
                   <span class="menu-icon fas fa-atom"></span>
                   <span class="menu-text">IntegratedML</span>
                 </a>
-              </li>
-              <!-- .menu-item -->
-              <li class="menu-item has-child">
-                <a href="#" class="menu-link"><span class="menu-icon oi oi-list-rich"></span> <span class="menu-text">Level Menu</span></a> <!-- child menu -->
-                <ul class="menu">
-                  <li class="menu-item">
-                    <a href="#" class="menu-link">Menu Item</a>
-                  </li>
-                  <li class="menu-item has-child">
-                    <a href="#" class="menu-link">Menu Item</a> <!-- grand child menu -->
-                    <ul class="menu">
-                      <li class="menu-item">
-                        <a href="#" class="menu-link">Child Item</a>
-                      </li>
-                      <li class="menu-item">
-                        <a href="#" class="menu-link">Child Item</a>
-                      </li>
-                    </ul>
-                  </li>
-                  </ul>
-              </li>
+              </li>-->
               <li class="menu-item">
                 <a href="javascript:doLogout()" class="menu-link">
                   <span class="menu-icon fas fa-sign-out-alt"></span>
@@ -197,13 +171,12 @@
               <!-- .btn-account -->
               <div class="has-badge">
                 <span>
-                  <img src="resources/img/wizard.png" width="32" height="32">
+                  <img src="resources/img/creator.png" width="32" height="32">
                 </span>
               </div>
               <div class="account-summary" style="margin-left:5px">
-                <h1 class="card-title"> Import Wizard </h1>
-                <h6 class="card-subtitle text-muted"> CSV Import Assistant with optional cube creation and generating
-                  sample dashboard </h6>
+                <h1 class="card-title"> Deploy an application </h1>
+                <h6 class="card-subtitle text-muted"> Select which forms you'd like to deploy into a new application </h6>
               </div>
               <!-- /.btn-account -->
             </header>
@@ -216,9 +189,34 @@
                   <div class="card">
                     <!-- .card-body -->
                     <div class="card-body">
-                      <form id="form" method="post" action="" enctype="multipart/form-data">
-                        <div id="formWizard"></div>
-                      </form>
+
+                      <div class="widget-container">
+                        <div class="loadpanel"></div>
+                        <div id="divFormsSelection">
+                          <div>Forms selection</div>
+                          <div id="formsSelection"></div>
+                          </br>
+                          <div id="dataGridForms"></div>
+                          <div style="display:flex; justify-content:flex-end; width:100%; padding:0;">
+                            <div id="btnSaveCompile"></div>
+                          </div>
+                        </div>
+                        <div id="divResults">
+                          <div id="msgOK" style="display: none;">
+                            <i class="fas fa-check"></i>
+                            <span>Success!</span>
+                          </div>
+                          <div id="msgError" style="display: none;">
+                            <i class="fas fa-times-circle"></i>
+                            <span>Success!</span>
+                          </div>
+                          <div id="btnOpenApp"></div>
+                          <div id="btnViewLog"></div>
+                          <div id="textAreaLog"></div>
+                        </div>
+                        <hr>
+                      </div>
+
                     </div><!-- /.card-body -->
                   </div><!-- /.card -->
                 </div>
@@ -257,7 +255,7 @@
   <script type="text/javascript" src="resources/js/custom-theme-changer.js"></script>
   <script type="text/javascript" src="resources/js/util.js"></script>
   <script type="text/javascript" src="resources/js/restforms2.js"></script>
-  <script type="text/javascript" src="resources/js/wizard.js"></script>
+  <script type="text/javascript" src="resources/js/deploy.js"></script>
   <!-- END ISProject Custom -->
 </body>
 

@@ -1,4 +1,5 @@
 var urlOrigin = window.location.origin;
+var restapp = "/irisrad"
 
 function sendRequest(url, method, data) {
     var d = $.Deferred();
@@ -59,7 +60,7 @@ function notify(msg, type, duration) {
 // Utility method for login logic
 function doLogin(user, password) {
     var d = $.Deferred();
-    $.ajax(`${urlOrigin}/forms/login`, {
+    $.ajax(`${urlOrigin}${restapp}/login`, {
         headers: {
             "Authorization": `Basic ${btoa(`${user}:${password}`)}`
         },
@@ -85,7 +86,7 @@ function doLogin(user, password) {
 
 // Utility method for logout logic
 function doLogout() {
-    $.ajax(`${urlOrigin}/forms/logout`, {
+    $.ajax(`${urlOrigin}${restapp}/logout`, {
         success: (data, textStatus, jqXHR) => {
             // todo: enhance this handling
             window.location.href = 'login.html'

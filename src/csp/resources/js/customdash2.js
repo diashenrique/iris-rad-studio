@@ -1,5 +1,6 @@
 var urlOrigin = window.location.origin;
-var urlREST = `${urlOrigin}/forms/form`;
+var restapp = "/irisrad"
+var urlREST = `${urlOrigin}${restapp}/form`;
 
 $(document).ajaxError(function (event, jqXHR, ajaxSettings, thrownError) {
   console.log(jqXHR.status, event, ajaxSettings, thrownError)

@@ -25,7 +25,7 @@
       <CSPApplication CookiePath="/csp/irisapp/" DefaultTimeout="900" DeployPath="/opt/irisapp/csp/" MatchRoles=":%DB_IRISAPP:%SQL" PasswordAuthEnabled="1" Recurse="1" ServeFiles="1" ServeFilesTimeout="3600" UnauthenticatedEnabled="0" Url="/csp/irisapp" UseSessionCookie="2"/>
       <CSPApplication CookiePath="/csp/irisapp/api/" DefaultTimeout="900" DispatchClass="diashenrique.REST.Dispatch" MatchRoles=":%All" PasswordAuthEnabled="1" Recurse="1" ServeFiles="1" ServeFilesTimeout="3600" UnauthenticatedEnabled="0" Url="/csp/irisapp/api" UseSessionCookie="2"/>
       <CSPApplication CookiePath="/dsw" DeployPath="${cspdir}dsw/" PasswordAuthEnabled="1" Recurse="1" ServeFiles="1" UnauthenticatedEnabled="0" Url="/dsw" UseSessionCookie="1"/>
-      <CSPApplication AuthenticationMethods="16416" CookiePath="/forms/" DispatchClass="dc.irisrad.rest.Main" MatchRoles=":%DB_%DEFAULT" Recurse="1" ServeFiles="1" Url="/forms" UseSessionCookie="1"/>
+      <CSPApplication AuthenticationMethods="16416" CookiePath="/irisrad/" DispatchClass="dc.irisrad.rest.Main" MatchRoles=":%DB_%DEFAULT" Recurse="1" ServeFiles="1" Url="/forms" UseSessionCookie="1"/>
       <Resource Directory="cls" Name="AnalyzeThis.PKG"/>
       <Resource Name="Data.PKG"/>
       <Resource Name="Form.PKG"/>

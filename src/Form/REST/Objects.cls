@@ -31,7 +31,7 @@ ClassMethod getFormObjects(class As %String = "", queryType As %String) As %Stat
 	Set sql = queryBase _ table
 
 	Set sc = ..InsertUserConstraintClause(class, .sql)
-	s ^j=sql
+	Set ^j=sql
 
 	Set sc = ##class(Form.JSON.SQL).WriteJSONFromSQL(sql, class)
 	Return sc
@@ -39,7 +39,12 @@ ClassMethod getFormObjects(class As %String = "", queryType As %String) As %Stat
 
 ClassMethod InsertUserConstraintClause(class As %String, ByRef sql As %String) As %Status
 {
-	set sc = $$$OK
+	// todo: add logic for admin user
+	If ($USERNAME = "_SYSTEM") {
+		Return $$$OK
+	}
+
+	Set sc = $$$OK
 	Set userClass = "dc.irisrad.default.UserForm"
 	Set userField = "user"
 	Set objUserField = ##class(%Dictionary.PropertyDefinition).IDKEYOpen(class, userField)
@@ -50,7 +55,7 @@ ClassMethod InsertUserConstraintClause(class As %String, ByRef sql As %String) A
 	If (class = userClass) {
 		Set sql = sql_" where username = '"_$USERNAME_"'"
 	}
-	return sc
+	Return sc
 }
 
 /// Returns the part between SELECT and FORM (queryBase) based on queryType and target class
@@ -60,28 +65,28 @@ ClassMethod InsertUserConstraintClause(class As %String, ByRef sql As %String) A
 ClassMethod getBaseQuery(queryType As %String, class As %String, Output queryBase As %String) As %Status
 {
 	Set queryBase = ""
-	Set queryType = $ZConvert(queryType, "U")
+	Set queryType = $ZCONVERT(queryType, "U")
 	Set userQueryClass = ##class(Form.Settings).getSetting("queryclass")
 	#dim sc As %Status = $$$OK
 	If ##class(%Dictionary.CompiledMethod).IDKEYExists(class, "query" _ queryType) {
-		Set queryBase = $Classmethod(class, "query" _ queryType)
+		Set queryBase = $CLASSMETHOD(class, "query" _ queryType)
 	}
-  elseif ((userQueryClass'="") && (##class(%Dictionary.CompiledParameter).IDKEYExists(userQueryClass, queryType))) {
-		Set queryBase = $Parameter(userQueryClass, queryType)
+  ElseIf ((userQueryClass'="") && (##class(%Dictionary.CompiledParameter).IDKEYExists(userQueryClass, queryType))) {
+		Set queryBase = $PARAMETER(userQueryClass, queryType)
 	}
-  elseif ((userQueryClass'="") && (##class(%Dictionary.CompiledMethod).IDKEYExists(userQueryClass, "query" _ queryType))) {
-		Set queryBase = $Classmethod(userQueryClass, "query" _ queryType, class)
+  ElseIf ((userQueryClass'="") && (##class(%Dictionary.CompiledMethod).IDKEYExists(userQueryClass, "query" _ queryType))) {
+		Set queryBase = $CLASSMETHOD(userQueryClass, "query" _ queryType, class)
 	}
-  elseif ##class(%Dictionary.CompiledParameter).IDKEYExists($Classname(), queryType) {
-		Set queryBase = $Parameter(, queryType)
+  ElseIf ##class(%Dictionary.CompiledParameter).IDKEYExists($CLASSNAME(), queryType) {
+		Set queryBase = $PARAMETER(, queryType)
 	}
-  elseif ##class(%Dictionary.CompiledMethod).IDKEYExists($Classname(), "query" _ queryType) {
-		Set queryBase = $Classmethod(, "query" _ queryType, class)
+  ElseIf ##class(%Dictionary.CompiledMethod).IDKEYExists($CLASSNAME(), "query" _ queryType) {
+		Set queryBase = $CLASSMETHOD(, "query" _ queryType, class)
 	}
-  elseif 0 {
+  ElseIf 0 {
 		/// TODO Some other type of "get stuff between SELECT and FROM"
 	}
-  else {
+  Else {
 		Set sc = $$$ERROR($$$GeneralError, "Query type " _ queryType _ " not found")
 	}
 
@@ -101,8 +106,8 @@ ClassMethod queryINFO(class As %String) As %String
 	If ##class(%Dictionary.CompiledMethod).IDKEYExists(class, method) {
 		Set sqlProc = $$$ClassSQLTable(class) _ "_" _ method _ "(id)"
 	}
-  else {
-		Set sqlProc = $Parameter(class, $$$displayProp)
+  Else {
+		Set sqlProc = $PARAMETER(class, $$$displayProp)
 	}
 
 	Set queryBase = "id AS _id, " _ sqlProc _ " As displayName"
@@ -134,7 +139,7 @@ ClassMethod queryALLOBJ(class As %String) As %String
 					Continue
 				}
 			} Else {
-				Set:$system.SQL.IsReservedWord(sqlName) sqlName = $$$QUOTE(sqlName)
+				Set:$SYSTEM.SQL.IsReservedWord(sqlName) sqlName = $$$QUOTE(sqlName)
 				Set queryBase = queryBase _ sqlName
 			}
 			Set queryBase = queryBase _ ", "
@@ -143,7 +148,7 @@ ClassMethod queryALLOBJ(class As %String) As %String
 		Set property=$$$comMemberNext(class, $$$cCLASSproperty, property)		
 	}
 
-	Set queryBase = $e(queryBase, 1,*-2) 
+	Set queryBase = $EXTRACT(queryBase, 1,*-2) 
 	Return queryBase
 }
 
@@ -172,7 +177,7 @@ ClassMethod SerialToJSONOBJECT(refProperty As %String, class As %Dictionary.Clas
 		Set property=$$$comMemberNext(class, $$$cCLASSproperty, property)		
 	}
 
-	Set queryBase = $e(queryBase, 1,*-2) _ ") " _ $s(level=0:$$$jsonLabel _ refProperty, 1:"")
+	Set queryBase = $EXTRACT(queryBase, 1,*-2) _ ") " _ $SELECT(level=0:$$$jsonLabel _ refProperty, 1:"")
 	Return queryBase
 }
 
@@ -193,12 +198,12 @@ ClassMethod getFormObjectsCustom(class As %String = "", queryType As %String) As
 	Set sc = ..checkObjPermission(class, "R")
 	Return:$$$ISERR(sc) sc
 
-	Set queryType = $ZConvert(queryType, "U")
+	Set queryType = $ZCONVERT(queryType, "U")
 
 	If ##class(%Dictionary.CompiledMethod).IDKEYExists(class, "customquery" _ queryType) {
-		Set sql = $Classmethod(class, "customquery" _ queryType)
+		Set sql = $CLASSMETHOD(class, "customquery" _ queryType)
 	}
-  else {
+  Else {
 		Set sc = $$$ERROR($$$GeneralError, "Custom query type " _ queryType _ " not found")
 	}
 
