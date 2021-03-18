@@ -290,4 +290,40 @@ ClassMethod ExportForms(pNamespace As %String, pAppName As %String, pNewFormsPat
   Return sc
 }
 
+/// Remove an application
+ClassMethod RemoveApp(pAppName As %String) As %Status
+{
+  Set sc = $$$OK
+  Set originalNS = $NAMESPACE
+  Try {
+    ZNspace "%SYS"
+    
+    Set appNamespace = pAppName_"_APP"
+    Set appDatabase = pAppName_"_APP"
+
+    // remove app's CSP web app
+    Set rs = ##class(%ResultSet).%New()
+    Set rs.ClassName = "Security.Applications"
+    Set rs.QueryName = "NamespaceList"
+    $$$TOE(sc, rs.Prepare())
+    $$$TOE(sc, rs.Execute(appNamespace))
+    While(rs.Next()) {
+      Set cspAppName = rs.Data("Name")
+      $$$TOE(sc, ##class(Security.Applications).Delete(cspAppName))
+    }
+    Do rs.Close()
+
+    // remove app namespace
+    $$$TOE(sc, ##class(Config.Namespaces).Delete(appNamespace))
+
+    // remove app database
+    $$$TOE(sc, ##Class(Config.Databases).Delete(appDatabase))
+  }
+  Catch ex {
+    Set sc=ex.AsStatus()
+  }
+  Set $NAMESPACE = originalNS
+  Return sc
+}
+
 }
