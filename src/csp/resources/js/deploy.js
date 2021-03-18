@@ -18,10 +18,10 @@ var newAppData = {};
 $(document).ready(function () {
   $("#divResults").hide();
 
-  $("#btnSaveCompile").dxButton({
-    icon: "fas fa-save",
+  $("#btnDeploy").dxButton({
+    icon: "fas fa-cloud-upload-alt",
     type: "default",
-    text: "Save",
+    text: "Deploy",
     onClick: function (e) {
       if (!form.validate().isValid) {
         DevExpress.ui.notify("There are required fields not filled in", "error", 4000);
@@ -58,7 +58,7 @@ $(document).ready(function () {
   });
 
   var loadPanel = $(".loadpanel").dxLoadPanel({
-    message: "Saving...",
+    message: "Deploying...",
     shadingColor: "rgba(0,0,0,0.4)",
     position: { of: "#divFormsSelection" },
     visible: false,
