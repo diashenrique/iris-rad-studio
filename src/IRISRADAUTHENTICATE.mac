@@ -3,16 +3,28 @@ IRISRADAuthentication(ServiceName,Username,Password,Properties,Status) PUBLIC {
   #include %occStatus
   #include %occErrors
 
+  Set Status = $SYSTEM.Status.OK()
+
   Set Namespace = %session.Namespace
-  ZNspace Namespace
+  Set radNamespace = "IRISAPP"
+  ZNspace radNamespace
 
   Set $ZTRAP="Error"
 
-  Set status = ##class(dc.irisrad.default.UserForm).Authenticate(Username,Password,.Properties,.Status)
+  Set isNamespaceRADApp = ##class(dc.irisrad.data.RADUserApp).IsNamespaceRADApp(Namespace)
+  If (isNamespaceRADApp) {
+    If (##class(dc.irisrad.data.RADUser).IsUserRADAdmin(Username)) {
+      Set Status = ##class(dc.irisrad.data.RADUser).Authenticate(Username, Password, .Properties)
+    } Else {
+      Set Status = ##class(dc.irisrad.default.UserForm).Authenticate(Username, Password, .Properties)
+    }
+  } Else {
+    Set Status = 0
+  }
 
   ZNspace "%SYS"
 
-  Quit $SYSTEM.Status.OK()
+  Quit Status
 
 Error
   ZNspace "%SYS"

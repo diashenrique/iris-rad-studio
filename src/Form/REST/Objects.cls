@@ -40,7 +40,8 @@ ClassMethod getFormObjects(class As %String = "", queryType As %String) As %Stat
 ClassMethod InsertUserConstraintClause(class As %String, ByRef sql As %String) As %Status
 {
 	// todo: add logic for admin user
-	If ($USERNAME = "_SYSTEM") {
+	Set username = $ZCONVERT($USERNAME, "L")
+	If (username = ##class(dc.irisrad.data.RADUser).#RADSuperUser) {
 		Return $$$OK
 	}
 

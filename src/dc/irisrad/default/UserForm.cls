@@ -15,7 +15,7 @@ Parameter FORMNAME = "Users";
 
 Parameter OBJPERMISSIONS = "CRUD";
 
-Index idxUsername On username [ Unique ];
+Index IdxUsername On username [ Unique ];
 
 ClassMethod Hash(pValue As %String) As %String
 {
@@ -40,9 +40,11 @@ Trigger Trigger [ Event = UPDATE ]
   }
 }
 
-ClassMethod Authenticate(pUsername As %String, pPassword As %String, ByRef pProperties, ByRef pStatus As %Status) As %Status
+ClassMethod Authenticate(pUsername As %String, pPassword As %String, ByRef pProperties) As %Status
 {
-  Set pStatus = $$$OK
+  // todo: change this code to the used in ##class(dc.irisrad.data.RADUser).Authenticate()
+
+  Set sc = $$$OK
   
   // Check if username is valid
   Set sql = "SELECT name FROM dc_irisrad_default.UserForm WHERE username = ?"
@@ -52,8 +54,8 @@ ClassMethod Authenticate(pUsername As %String, pPassword As %String, ByRef pProp
   Do rs.%Next()
   Set fullName = rs.name
   If (fullName = "") {
-    Set pStatus = $SYSTEM.Status.Error($$$UserDoesNotExist)
-    Quit pStatus
+    Set sc = $SYSTEM.Status.Error($$$UserDoesNotExist)
+    Quit sc
   }
   Kill rs, stmt
 
@@ -66,21 +68,22 @@ ClassMethod Authenticate(pUsername As %String, pPassword As %String, ByRef pProp
   Do rs.%Next()
   Set fullName = rs.name
   If (fullName = "") {
-    Set pStatus = $SYSTEM.Status.Error($$$UserInvalidPassword)
-    Quit pStatus
+    Set sc = $SYSTEM.Status.Error($$$UserInvalidPassword)
+    Quit sc
   }
   Kill rs, stmt
 
   // IRIS's user properties
   Set pProperties("FullName") = fullName
   Set pProperties("Comment") = ""
+  // todo: review the right roles
   Set pProperties("Roles") = "%All"
   Set pProperties("NameSpace") = $NAMESPACE
   Set pProperties("Routine") = ""
   Set pProperties("Password") = encPsw
   Set pProperties("Username") = pUsername
   
-  Return pStatus
+  Return sc
 }
 
 Storage Default

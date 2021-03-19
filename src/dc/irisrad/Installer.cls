@@ -3,6 +3,9 @@ Include %occInclude
 Class dc.irisrad.Installer
 {
 
+/// Default system namespace
+Parameter DefaulSystemNS = "IRISAPP";
+
 XData setup
 {
 <Manifest>
@@ -63,7 +66,8 @@ XData setup
     </Invoke>
     
     <!-- create a web application for the new app -->
-    <CSPApplication Url="${NEW_APP_URL}" Directory="${CSPAPPPATH}" ServeFiles="1" Recurse="1" Grant="%DB_${NAMESPACE},%SQL" AuthenticationMethods="8224" />
+    <!-- <CSPApplication Url="${NEW_APP_URL}" Directory="${CSPAPPPATH}" ServeFiles="1" Recurse="1" Grant="%DB_${NAMESPACE},%SQL" AuthenticationMethods="8224" /> -->
+    <CSPApplication Url="${NEW_APP_URL}" Directory="${CSPAPPPATH}" ServeFiles="1" Recurse="1" Grant="%DB_${NAMESPACE},%SQL" AuthenticationMethods="8192" />
 
     <!-- enable the web application for the new app -->
     <Invoke Class="dc.irisrad.Installer" Method="EnableCSPApp">
@@ -107,11 +111,10 @@ ClassMethod DeployApp(pAppName As %String, pAppDesc As %String, pFormsCSV As %St
   Set sc = $$$OK
 
   Set newFormsPath = "/tmp/"_pAppName
-  $$$TOE(sc, ..ExportForms("IRISAPP", pAppName, newFormsPath, pFormsCSV))
-
-  // todo: add a description field for the application
+  $$$TOE(sc, ..ExportForms(..#DefaulSystemNS, pAppName, newFormsPath, pFormsCSV))
 
   Set pVars("APPNAME") = pAppName
+  Set pVars("APP_DESC") = pAppDesc
   Set pVars("SRC_PATH") = "/opt/irisapp/src/csp"
   Set pVars("NEW_APP_URL") = "/csp/"_pVars("APPNAME")_"-app"
   Set pVars("NEW_APP_FORMS_PATH") = newFormsPath
@@ -126,6 +129,8 @@ ClassMethod DeployApp(pAppName As %String, pAppDesc As %String, pFormsCSV As %St
   Set pVars("RESTAPPNAME") = "/"_pVars("APPNAME")_"-app/forms"
   Set pVars("FORCEROUTINES") = pForceRoutines
   Set sc = ##class(dc.irisrad.Installer).setup(.pVars)
+
+  Do ..RegisterApp(.pVars)
 
   Return sc
 }
@@ -191,7 +196,6 @@ ClassMethod InstallZPM(pPackageName As %String, pNamespace As %String = "") As %
       New $NAMESPACE
       Set $NAMESPACE = pNamespace
     }
-    s ^j("namespace")=$NAMESPACE
     ZPm "install "_pPackageName
   }
   Catch ex {
@@ -209,7 +213,8 @@ ClassMethod createRESTApp(pAppName As %String, pNamespace As %String, pDispatchC
     New $NAMESPACE
     Set $NAMESPACE = "%SYS"
     If '##class(Security.Applications).Exists(pAppName) {
-      Set props("AutheEnabled") = 8224
+      #; Set props("AutheEnabled") = 8224
+      Set props("AutheEnabled") = 8192
       Set props("NameSpace") = pNamespace
       Set props("IsNameSpaceDefault") = $$$NO
       Set props("DispatchClass") = pDispatchClass
@@ -297,7 +302,7 @@ ClassMethod RemoveApp(pAppName As %String) As %Status
   Set originalNS = $NAMESPACE
   Try {
     ZNspace "%SYS"
-    
+
     Set appNamespace = pAppName_"_APP"
     Set appDatabase = pAppName_"_APP"
 
@@ -317,12 +322,98 @@ ClassMethod RemoveApp(pAppName As %String) As %Status
     $$$TOE(sc, ##class(Config.Namespaces).Delete(appNamespace))
 
     // remove app database
-    $$$TOE(sc, ##Class(Config.Databases).Delete(appDatabase))
+    Set rs = ##class(%ResultSet).%New()
+    Set rs.ClassName = "Config.Databases"
+    Set rs.QueryName = "CompactLocalDBList"
+    $$$TOE(sc, rs.Prepare())
+    $$$TOE(sc, rs.Execute(appDatabase))
+    While(rs.Next()) {
+      Set dbDirectory = rs.Data("Directory")
+      $$$TOE(sc, ##class(SYS.Database).DismountDatabase(dbDirectory))
+      $$$TOE(sc, ##Class(Config.Databases).Delete(appDatabase))
+      $$$TOE(sc, ##class(SYS.Database).DeleteDatabase(dbDirectory))
+    }
+    Do rs.Close()
+
+    // unregister app
+    $$$TOE(sc, ..UnregisterApp(pAppName))
   }
   Catch ex {
     Set sc=ex.AsStatus()
   }
   Set $NAMESPACE = originalNS
+  Return sc
+}
+
+ClassMethod teste() As %Status
+{
+  Set sc = $$$OK
+  Set var("APPNAME")="test1"
+  Set var("APPPATH")="/opt/test1-app"
+  Set var("APP_DESC")="test1 app"
+  Set var("CSPAPPPATH")="/opt/test1-app/csp/"
+  Set var("DBNAME")="TEST1_APP"
+  Set var("DBPATH")="/usr/irissys/mgr/TEST1_APP"
+  Set var("FORCEROUTINES")=1
+  Set var("FORMSCLASSPATH")="/opt/irisapp/src"
+  Set var("NAMESPACE")="TEST1_APP"
+  Set var("NAMESPACE_CSPAPPPATH")="/opt/test1/csp"
+  Set var("NEW_APP_FORMS_PATH")="/tmp/test1"
+  Set var("NEW_APP_URL")="/csp/test1-app"
+  Set var("RESOURCE")="%DB_TEST1_APP"
+  Set var("RESTAPPNAME")="/test1-app/forms"
+  Set var("SRC_PATH")="/opt/irisapp/src/csp"
+  zw ..RegisterApp(.var)
+  Return sc
+}
+
+/// Register an app
+ClassMethod RegisterApp(ByRef pVars) As %Status
+{
+  Set sc = $$$OK
+  Set originalNS = $NAMESPACE
+
+  Try {
+    ZNspace ..#DefaulSystemNS
+
+    Set app = ##class(dc.irisrad.data.RADUserApp).%New()
+
+    Set username = $USERNAME
+    Set app.User = ##class(dc.irisrad.data.RADUser).IdxUsernameOpen(username,, .sc)
+    Return:$$$ISERR(sc) sc
+
+    Set app.AppName = pVars("APPNAME")
+    Set app.AppDesc = pVars("APP_DESC")
+    Set app.AppNamespace = pVars("NAMESPACE")
+
+    Set sc = app.%Save()
+  }
+  Catch ex {
+    Set sc=ex.AsStatus()
+  }
+  
+  ZNspace originalNS
+  Return sc
+}
+
+/// Unregister an app
+ClassMethod UnregisterApp(pAppName As %String) As %Status
+{
+  Set sc = $$$OK
+  Set originalNS = $NAMESPACE
+
+  Try {
+    ZNspace ..#DefaulSystemNS
+    Set appNamespace = pAppName_"_APP"
+    Set appRef = ##class(dc.irisrad.data.RADUserApp).IdxAppNamespaceOpen(appNamespace, .sc)
+    Return:($$$ISERR(sc)) sc
+    Set sc = ##class(dc.irisrad.data.RADUserApp).%DeleteId(appRef.%Id())
+  }
+  Catch ex {
+    Set sc=ex.AsStatus()
+  }
+  
+  ZNspace originalNS
   Return sc
 }
 

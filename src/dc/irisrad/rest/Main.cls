@@ -159,10 +159,6 @@ ClassMethod deleteFormObject(form, id) As %Status
 
 ClassMethod Deploy() As %Status
 {
-  #; zn "test_app"
-  #; zpm "install restforms2"
-  #; q 1
-
   Set sc = $$$OK
   Try {
     // todo: check if app already exists

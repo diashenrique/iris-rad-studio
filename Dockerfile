@@ -32,6 +32,8 @@ RUN \
   zpm "install csvgen" \
   do $System.OBJ.LoadDir("/opt/irisapp/src","ck",,1) \
   do ##class(Form.Util.Init).populateTestForms() \
+  write "Installing RAD superuser",! \
+  write ##class(dc.irisrad.data.RADUser).CreateSuperUser() \
   zn "%SYS" \
   write "Installing routinies for delegated authentication...",! \
   do $System.OBJ.Load("/opt/irisapp/src/IRISRADAUTHENTICATE.mac","ck",,1) \
@@ -45,6 +47,7 @@ RUN \
   set webProperties("NameSpace") = "IRISAPP" \
   set webProperties("IsNameSpaceDefault") = 0 \
   set webProperties("AutheEnabled") = 8224 \
+  set webProperties("AutheEnabled") = 8192 \
   set webProperties("CookiePath") = "/irisrad/" \
   set webProperties("MatchRoles") = ":%DB_%DEFAULT" \
   set webProperties("DispatchClass") = "dc.irisrad.rest.Main" \
