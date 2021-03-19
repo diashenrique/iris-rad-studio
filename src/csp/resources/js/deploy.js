@@ -49,8 +49,10 @@ $(document).ready(function () {
             $("#divResults").show();
             if (newAppData.status === 1) {
               $("#msgOK").show();
+              $("#btnOpenApp").show();
             } else {
-              $("#msgError").hide();
+              $("#msgError").show();
+              $("#btnOpenApp").hide();
             }
           });
       }
