@@ -10,10 +10,12 @@ $(document).ajaxError(function (event, jqXHR, ajaxSettings, thrownError) {
 });
 
 var qs = getQueryString();
-var formName = qs.formName || 'Form.Test.Person';
+var formName = qs.formName || 'dc.irisrad.default.UserForm';
 var pIdSelected = "";
 
 $(document).ready(function () {
+  createMenu();
+
   $("#divProperties").hide();
 
   var storeSelectBox = new DevExpress.data.DataSource({

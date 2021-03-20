@@ -130,7 +130,7 @@ ClassMethod DeployApp(pAppName As %String, pAppDesc As %String, pFormsCSV As %St
   Set pVars("FORCEROUTINES") = pForceRoutines
   Set sc = ##class(dc.irisrad.Installer).setup(.pVars)
 
-  Do ..RegisterApp(.pVars)
+  $$$TOE(sc, ..RegisterApp(.pVars))
 
   Return sc
 }
@@ -149,6 +149,7 @@ ClassMethod RoutineExists(pRoutineName As %String, pNamespace As %String) As %Bo
   $$$TOE(sc, rs.Prepare())
   $$$TOE(sc, rs.Execute(pRoutineName, "", "", pNamespace))
   Set exists = rs.Next()
+  Do rs.Close()
   Return exists
 }
 
@@ -379,12 +380,13 @@ ClassMethod RegisterApp(ByRef pVars) As %Status
     Set app = ##class(dc.irisrad.data.RADUserApp).%New()
 
     Set username = $USERNAME
-    Set app.User = ##class(dc.irisrad.data.RADUser).IdxUsernameOpen(username,, .sc)
+    Set app.RADUser = ##class(dc.irisrad.data.RADUser).IdxUsernameOpen(username,, .sc)
     Return:$$$ISERR(sc) sc
 
     Set app.AppName = pVars("APPNAME")
     Set app.AppDesc = pVars("APP_DESC")
     Set app.AppNamespace = pVars("NAMESPACE")
+    Set app.AppURL = ##class(dc.irisrad.Installer).GenerateAppURL(pVars("APPNAME"))
 
     Set sc = app.%Save()
   }
@@ -394,6 +396,12 @@ ClassMethod RegisterApp(ByRef pVars) As %Status
   
   ZNspace originalNS
   Return sc
+}
+
+/// Generate a URL for access an app
+ClassMethod GenerateAppURL(pAppName As %String) As %String
+{
+  Return "/csp/"_pAppName_"-app/login.html"
 }
 
 /// Unregister an app

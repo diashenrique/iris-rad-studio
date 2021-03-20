@@ -11,11 +11,13 @@ $(document).ajaxError(function (event, jqXHR, ajaxSettings, thrownError) {
 });
 
 var qs = getQueryString();
-var formName = qs.formName || 'Form.Test.Person';
+var formName = qs.formName || 'dc.irisrad.default.UserForm';
 var selectedForms = "";
 var newAppData = {};
 
 $(document).ready(function () {
+  createMenu();
+  
   $("#divResults").hide();
 
   $("#btnDeploy").dxButton({
@@ -36,25 +38,25 @@ $(document).ready(function () {
         dataForm.forms = selectedForms;
 
         $.ajax({
-          url: `${urlREST}/deploy`,
+          url: `${urlREST}/apps/${dataForm.appName}`,
           method: "POST",
           processData: false,
           contentType: "application/json",
           data: JSON.stringify(dataForm)
         })
-          .done(function (resp) {
-            newAppData = resp;
-            loadPanel.hide();
-            $("#divFormsSelection").hide();
-            $("#divResults").show();
-            if (newAppData.status === 1) {
-              $("#msgOK").show();
-              $("#btnOpenApp").show();
-            } else {
-              $("#msgError").show();
-              $("#btnOpenApp").hide();
-            }
-          });
+        .done(function (resp) {
+          newAppData = resp;
+          loadPanel.hide();
+          $("#divFormsSelection").hide();
+          $("#divResults").show();
+          if (newAppData.status === 1) {
+            $("#msgOK").show();
+            $("#btnOpenApp").show();
+          } else {
+            $("#msgError").show();
+            $("#btnOpenApp").hide();
+          }
+        });
       }
     }
   });
@@ -93,7 +95,7 @@ $(document).ready(function () {
   });
 
   var formsUrl = `${urlRESTForm}/info`;
-  var dataGrid = $("#dataGridForms").dxDataGrid({
+  $("#dataGridForms").dxDataGrid({
     dataSource: new DevExpress.data.CustomStore({
       load: function () {
         return $.getJSON(`${formsUrl}`);
@@ -106,17 +108,7 @@ $(document).ready(function () {
       dataField: "name",
       caption: "Form",
       dataType: "string",
-    }/*,
-      {
-        dataField: "DisplayName"
-      },
-      {
-        dataField: "IsRequired",
-        caption: "Is Required?",
-        dataType: "boolean",
-        value: false,
-      }*/
-    ],
+    }],
     onSelectionChanged: function (selectedItems) {
       selectedForms = selectedItems.selectedRowsData;
     }

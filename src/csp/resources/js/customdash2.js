@@ -26,6 +26,7 @@ if (formName) {
 }
 
 $(document).ready(function () {
+  createMenu();
   createFormSelector();
   if (formName) {
     $("#divFormName").text(` ${formName}`);

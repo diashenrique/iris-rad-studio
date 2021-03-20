@@ -10,7 +10,7 @@ $(document).ajaxError(function (event, jqXHR, ajaxSettings, thrownError) {
 });
 
 var qs = getQueryString();
-var formName = qs.formName || 'Form.Test.Person';
+var formName = qs.formName || 'dc.irisrad.default.UserForm';
 
 $(document).ready(function () {
   createFormWizard();

@@ -99,7 +99,7 @@
             <!-- .menu -->
             <ul id="menu" class="menu">
               <!-- .menu-item -->
-              <!-- <li class="menu-item">
+              <!-- <li class="menu-item has-active">
                 <a href="apps.html" class="menu-link">
                   <span class="menu-icon fa fa-folder-open"></span>
                   <span class="menu-text">Applications</span>
@@ -117,7 +117,7 @@
                   <span class="menu-text">Create Class</span>
                 </a>
               </li>
-              <li class="menu-item has-active">
+              <li class="menu-item">
                 <a href="deploy.html" class="menu-link">
                   <span class="menu-icon fas fa-cloud-upload-alt"></span>
                   <span class="menu-text">Deploy app</span>
@@ -175,8 +175,8 @@
                 </span>
               </div>
               <div class="account-summary" style="margin-left:5px">
-                <h1 class="card-title"> Deploy an application </h1>
-                <h6 class="card-subtitle text-muted"> Select which forms you'd like to deploy into a new application </h6>
+                <h1 class="card-title"> Application manager </h1>
+                <!-- <h6 class="card-subtitle text-muted"> Select which forms you'd like to deploy into a new application </h6> -->
               </div>
               <!-- /.btn-account -->
             </header>
@@ -193,26 +193,10 @@
                       <div class="widget-container">
                         <div class="loadpanel"></div>
                         <div id="divFormsSelection">
-                          <div>Forms selection</div>
-                          <div id="formsSelection"></div>
-                          </br>
-                          <div id="dataGridForms"></div>
+                          <div id="dataGrid"></div>
                           <div style="display:flex; justify-content:flex-end; width:100%; padding:0;">
                             <div id="btnDeploy"></div>
                           </div>
-                        </div>
-                        <div id="divResults">
-                          <div id="msgOK" style="display: none;">
-                            <i class="fas fa-check"></i>
-                            <span>Success!</span>
-                          </div>
-                          <div id="msgError" style="display: none;">
-                            <i class="fas fa-times-circle"></i>
-                            <span>Error...</span>
-                          </div>
-                          <div id="btnOpenApp"></div>
-                          <div id="btnViewLog"></div>
-                          <div id="textAreaLog"></div>
                         </div>
                         <hr>
                       </div>
@@ -256,7 +240,7 @@
   <script type="text/javascript" src="resources/js/util.js"></script>
   <script type="text/javascript" src="resources/js/restforms2.js"></script>
   <script type="text/javascript" src="resources/js/menu.js"></script>
-  <script type="text/javascript" src="resources/js/deploy.js"></script>
+  <script type="text/javascript" src="resources/js/apps.js"></script>
   <!-- END ISProject Custom -->
 </body>
 

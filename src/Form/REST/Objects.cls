@@ -31,7 +31,6 @@ ClassMethod getFormObjects(class As %String = "", queryType As %String) As %Stat
 	Set sql = queryBase _ table
 
 	Set sc = ..InsertUserConstraintClause(class, .sql)
-	Set ^j=sql
 
 	Set sc = ##class(Form.JSON.SQL).WriteJSONFromSQL(sql, class)
 	Return sc

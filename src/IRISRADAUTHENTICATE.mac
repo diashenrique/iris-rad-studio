@@ -14,11 +14,23 @@ IRISRADAuthentication(ServiceName,Username,Password,Properties,Status) PUBLIC {
   Set isNamespaceRADApp = ##class(dc.irisrad.data.RADUserApp).IsNamespaceRADApp(Namespace)
   If (isNamespaceRADApp) {
     If (##class(dc.irisrad.data.RADUser).IsUserRADAdmin(Username)) {
+      // user is an admin, so authenticate in default RAD namespace
       Set Status = ##class(dc.irisrad.data.RADUser).Authenticate(Username, Password, .Properties)
+
     } Else {
-      Set Status = ##class(dc.irisrad.default.UserForm).Authenticate(Username, Password, .Properties)
+      // user is a common one, so authenticate in the app namespace
+      ZNspace Namespace
+      Try {
+        Set Status = ##class(dc.irisrad.default.UserForm).Authenticate(Username, Password, .Properties)
+      }
+      Catch ex {
+        Set Status = ex.AsStatus()
+      }
+      ZNspace radNamespace
     }
+
   } Else {
+    // namespace hasn't a RAD app, so we don't validate anything
     Set Status = 0
   }
 

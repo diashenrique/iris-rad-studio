@@ -67,6 +67,7 @@ function doLogin(user, password) {
         success: (data, textStatus, jqXHR) => {
             // todo: enhance this handling
             window.location.href = 'rad.html'
+            setUserInfo(data);
             d.resolve();
         },
         error: (jqXHR, textStatus, errorThrown) => {
@@ -78,6 +79,7 @@ function doLogin(user, password) {
             } else {
                 notify('Sorry, can\'t login. See log for more detail.', NotificationEnum.ERROR);
             }
+            setUserInfo();
             d.reject();
         }
     });
@@ -89,12 +91,26 @@ function doLogout() {
     $.ajax(`${urlOrigin}${restapp}/logout`, {
         success: (data, textStatus, jqXHR) => {
             // todo: enhance this handling
-            window.location.href = 'login.html'
+            window.location.href = 'login.html';
+            setUserInfo();
         },
         error: (jqXHR, textStatus, errorThrown) => {
             console.log(jqXHR, textStatus, errorThrown);
             notify('Error on logout. See log for more detail.', NotificationEnum.ERROR);
-            window.location.href = 'login.html'
+            window.location.href = 'login.html';
+            setUserInfo();
         }
     });
+}
+
+function setUserInfo(userInfo) {
+    if (userInfo) {
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+    } else {
+        localStorage.removeItem("userInfo");
+    }
+}
+
+function getUserInfo() {
+    return JSON.parse(localStorage.getItem("userInfo"));
 }
