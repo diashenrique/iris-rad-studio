@@ -3,6 +3,9 @@ Include %occInclude
 Class dc.irisrad.Installer
 {
 
+/// Default system app name
+Parameter DefaulSystemAppName = "irisapp";
+
 /// Default system namespace
 Parameter DefaulSystemNS = "IRISAPP";
 
@@ -105,10 +108,43 @@ XData setup
 </Manifest>
 }
 
+/// Check all validation rules for app creation
+ClassMethod ValidateCreation(pAppName As %String) As %Status
+{
+  Set sc = $$$OK
+
+  Try {
+    // avoid creation of an app with same name of default RAD app
+    If (pAppName = ..#DefaulSystemAppName) {
+      Throw ##class(%Exception.General).%New("Application name not allowed: "_pAppName)
+    }
+
+    // avoid duplication of app name
+    Set originalNS = $NAMESPACE
+    Try {
+      ZNspace ..#DefaulSystemNS
+      If (##class(dc.irisrad.data.RADUserApp).IdxAppNameExists(pAppName)) {
+        Throw ##class(%Exception.General).%New("Application name already exists: "_pAppName)
+      }
+    }
+    Catch ex {
+      Set sc=ex.AsStatus()
+    }
+    ZNspace originalNS
+  }
+  Catch ex {
+    Set sc = ex.AsStatus()
+  }
+
+  Return sc
+}
+
 ClassMethod DeployApp(pAppName As %String, pAppDesc As %String, pFormsCSV As %String, pForceRoutines As %Boolean = 0) As %Status
 {
   // zn "%sys" do $SYSTEM.OBJ.Load("/opt/irisapp/src/dc/irisrad/Installer.cls","c") do ##class(dc.irisrad.Installer).DeployApp("test", "Test app", "User.forms.grocery.GroceryListForm,User.forms.grocery.GroceryProductForm", 1)
   Set sc = $$$OK
+
+  $$$TOE(sc, ..ValidateCreation(pAppName))
 
   Set newFormsPath = "/tmp/"_pAppName
   $$$TOE(sc, ..ExportForms(..#DefaulSystemNS, pAppName, newFormsPath, pFormsCSV))
@@ -116,9 +152,9 @@ ClassMethod DeployApp(pAppName As %String, pAppDesc As %String, pFormsCSV As %St
   Set pVars("APPNAME") = pAppName
   Set pVars("APP_DESC") = pAppDesc
   Set pVars("SRC_PATH") = "/opt/irisapp/src/csp"
-  Set pVars("NEW_APP_URL") = "/csp/"_pVars("APPNAME")_"-app"
+  Set pVars("NEW_APP_URL") = "/csp/"_pVars("APPNAME")
   Set pVars("NEW_APP_FORMS_PATH") = newFormsPath
-  Set pVars("APPPATH") = "/opt/"_$ZCONVERT(pVars("APPNAME"), "L")_"-app"
+  Set pVars("APPPATH") = "/opt/"_$ZCONVERT(pVars("APPNAME"), "L")
   Set pVars("NAMESPACE_CSPAPPPATH") = "/opt/"_$ZCONVERT(pVars("APPNAME"), "L")_"/csp"
   Set pVars("FORMSCLASSPATH") = "/opt/irisapp/src"
   Set pVars("CSPAPPPATH") = pVars("APPPATH")_"/csp/"
@@ -126,7 +162,7 @@ ClassMethod DeployApp(pAppName As %String, pAppDesc As %String, pFormsCSV As %St
   Set pVars("DBNAME") = $ZCONVERT(pVars("APPNAME"), "U")_"_APP"
   Set pVars("NAMESPACE") = $ZCONVERT(pVars("APPNAME"), "U")_"_APP"
   Set pVars("RESOURCE") = "%DB_"_pVars("DBNAME")
-  Set pVars("RESTAPPNAME") = "/"_pVars("APPNAME")_"-app/forms"
+  Set pVars("RESTAPPNAME") = "/"_pVars("APPNAME")_"/forms"
   Set pVars("FORCEROUTINES") = pForceRoutines
   Set sc = ##class(dc.irisrad.Installer).setup(.pVars)
 
@@ -320,7 +356,9 @@ ClassMethod RemoveApp(pAppName As %String) As %Status
     Do rs.Close()
 
     // remove app namespace
-    $$$TOE(sc, ##class(Config.Namespaces).Delete(appNamespace))
+    If (##class(Config.Namespaces).Exists(appNamespace)) {
+      $$$TOE(sc, ##class(Config.Namespaces).Delete(appNamespace))
+    }
 
     // remove app database
     Set rs = ##class(%ResultSet).%New()
@@ -343,28 +381,6 @@ ClassMethod RemoveApp(pAppName As %String) As %Status
     Set sc=ex.AsStatus()
   }
   Set $NAMESPACE = originalNS
-  Return sc
-}
-
-ClassMethod teste() As %Status
-{
-  Set sc = $$$OK
-  Set var("APPNAME")="test1"
-  Set var("APPPATH")="/opt/test1-app"
-  Set var("APP_DESC")="test1 app"
-  Set var("CSPAPPPATH")="/opt/test1-app/csp/"
-  Set var("DBNAME")="TEST1_APP"
-  Set var("DBPATH")="/usr/irissys/mgr/TEST1_APP"
-  Set var("FORCEROUTINES")=1
-  Set var("FORMSCLASSPATH")="/opt/irisapp/src"
-  Set var("NAMESPACE")="TEST1_APP"
-  Set var("NAMESPACE_CSPAPPPATH")="/opt/test1/csp"
-  Set var("NEW_APP_FORMS_PATH")="/tmp/test1"
-  Set var("NEW_APP_URL")="/csp/test1-app"
-  Set var("RESOURCE")="%DB_TEST1_APP"
-  Set var("RESTAPPNAME")="/test1-app/forms"
-  Set var("SRC_PATH")="/opt/irisapp/src/csp"
-  zw ..RegisterApp(.var)
   Return sc
 }
 
@@ -401,7 +417,7 @@ ClassMethod RegisterApp(ByRef pVars) As %Status
 /// Generate a URL for access an app
 ClassMethod GenerateAppURL(pAppName As %String) As %String
 {
-  Return "/csp/"_pAppName_"-app/login.html"
+  Return "/csp/"_pAppName_"/login.html"
 }
 
 /// Unregister an app

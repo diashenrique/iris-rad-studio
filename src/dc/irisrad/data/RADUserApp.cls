@@ -18,14 +18,34 @@ Index IdxAppNamespace On AppNamespace [ Unique ];
 
 Index IdxUserAppName On (RADUser, AppName) [ Unique ];
 
-/// Default system namespace
-Parameter DefaulSystemNS = "IRISAPP";
+Index IdxAppName On AppName [ Unique ];
 
 /// Check if a namespace is from a RAD app
 ClassMethod IsNamespaceRADApp(pNamespace As %String) As %Boolean
 {
-  Return:(pNamespace = ..#DefaulSystemNS) $$$OK
+  Return:(pNamespace = ##class(dc.irisrad.Installer).#DefaulSystemNS) $$$OK
   Return ##class(dc.irisrad.data.RADUserApp).IdxAppNamespaceExists(pNamespace)
+}
+
+/// Check if the user is in RAD admins table
+ClassMethod IsUserRADAdminApp(pUsername As %String, pAppName As %String = "") As %Boolean
+{
+  Set isUserRADAdminApp = 0
+  Set originalNS = $NAMESPACE
+  Try {
+    ZNspace ##class(dc.irisrad.Installer).#DefaulSystemNS
+    If (pAppName = "") {
+      Set isUserRADAdminApp = ##class(dc.irisrad.data.RADUser).IdxUsernameExists(pUsername)
+    } Else {
+      Do ##class(dc.irisrad.data.RADUser).IdxUsernameExists(pUsername, .userId)
+      Set isUserRADAdminApp = ##class(dc.irisrad.data.RADUserApp).IdxUserAppNameExists(userId, pAppName)
+    }
+  }
+  Catch ex {
+    Set sc=ex.AsStatus()
+  }
+  ZNspace originalNS
+  Return isUserRADAdminApp
 }
 
 /// Get all applications for a user
@@ -45,14 +65,6 @@ ClassMethod GetUserApps(pUsername As %String) As %SQL.StatementResult
   Set stmt = ##class(%SQL.Statement).%New()
   $$$TOE(st, stmt.%Prepare(sql))
   Return stmt.%Execute(pUsername)
-}
-
-/// Check if the user is in RAD admins table
-ClassMethod IsUserRADAdminApp(pUsername As %String, pAppName As %String = "") As %Boolean
-{
-  Return:(pAppName = "") ##class(dc.irisrad.data.RADUser).IdxUsernameExists(pUsername)
-  Do ##class(dc.irisrad.data.RADUser).IdxUsernameExists(pUsername, .userId)
-  Return ##class(dc.irisrad.data.RADUserApp).IdxUserAppNameExists(userId, pAppName)
 }
 
 Storage Default

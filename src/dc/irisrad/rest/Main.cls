@@ -87,6 +87,7 @@ ClassMethod DoLogin(pAppName As %String = "") As %Status
     // auth info stored in AUTHENTICATION HTTP header.
     #; Return ##class(Form.REST.Main).test()
 
+    Set:(pAppName = ##class(dc.irisrad.Installer).#DefaulSystemAppName) pAppName = ""
     Write {
       "username": ($USERNAME),
       "admin": (##class(dc.irisrad.data.RADUserApp).IsUserRADAdminApp($USERNAME, pAppName))
@@ -200,6 +201,7 @@ ClassMethod DeployApp(pAppName As %String) As %Status
   Set sc = $$$OK
   Try {
     // todo: check if app already exists
+    // todo: perform a dependency check on forms
 
     Set body = {}.%FromJSON(%request.Content)
     //Set appName = body.appName
@@ -233,6 +235,7 @@ ClassMethod DeployApp(pAppName As %String) As %Status
       ZNspace originalNS
     }
     Catch ex {
+      Write ex.DisplayString()
       Set sc=ex.AsStatus()
     }
     ZNspace originalNS

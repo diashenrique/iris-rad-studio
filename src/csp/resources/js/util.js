@@ -57,10 +57,14 @@ function notify(msg, type, duration) {
     DevExpress.ui.notify(msg, type, duration||1500);
 }
 
+function getAppName() {
+    return /\/csp\/([^\/]+)\//.exec(location.pathname)[1]
+}
+
 // Utility method for login logic
 function doLogin(user, password) {
     var d = $.Deferred();
-    $.ajax(`${urlOrigin}${restapp}/login`, {
+    $.ajax(`${urlOrigin}${restapp}/login/${getAppName()}`, {
         headers: {
             "Authorization": `Basic ${btoa(`${user}:${password}`)}`
         },
