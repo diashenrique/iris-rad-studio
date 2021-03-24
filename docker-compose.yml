@@ -12,4 +12,4 @@ services:
     volumes:
       - ~/iris.key:/usr/irissys/mgr/iris.key
       - ./:/irisdev/app
-      - ./src/csp:/opt/irisapp/csp
+      - ./src/csp:/opt/irisapp/src/csp

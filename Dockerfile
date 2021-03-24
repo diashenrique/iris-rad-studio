@@ -55,7 +55,7 @@ RUN \
   kill webProperties \
   write "Modify /csp/irisapp application path...",! \
   set webName = "/csp/irisapp" \
-  set webProperties("Path") = "/opt/irisapp/csp/" \
+  set webProperties("Path") = "/opt/irisapp/src/csp/" \
   set sc = ##class(Security.Applications).Modify(webName, .webProperties) \
   write "Add Role for CSPSystem User...",! \
   set sc=##class(Security.Users).AddRoles("CSPSystem","%DB_%DEFAULT") 
