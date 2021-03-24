@@ -26,6 +26,7 @@ if (formName) {
 }
 
 $(document).ready(function () {
+  console.log("henrique");
   createMenu();
   createFormSelector();
   if (formName) {
@@ -161,7 +162,7 @@ var createDefaultCRUDForm = function () {
     complete: (resp) => {
       var rf2FormInfo = resp.responseJSON;
       var cols = rf2FormInfo.fields.map(rf2Field => createFormField(rf2Field));
-      
+
       var formDescription = rf2FormInfo.name
       $("#divFormName").text(` ${formDescription}`);
 
@@ -230,7 +231,7 @@ var createDefaultCRUDForm = function () {
           export: {
             enabled: true
           },
-          columns: cols,
+          columns: cols
         };
 
         if (!queryName) {
@@ -272,6 +273,9 @@ var createFormField = (rf2Field) => {
 
   // Password field
   if (rf2Field.type === FieldType.Password) {
+    objCol.customizeText = function(e){
+      return '*****';
+    },
     objCol.editorOptions = {
       mode: 'password'
     }
@@ -299,24 +303,24 @@ var createFormField = (rf2Field) => {
   return objCol;
 }
 
-var getTagBoxEditorTemplate = function(lookupForm) {
+var getTagBoxEditorTemplate = function (lookupForm) {
   return function (cellElement, cellInfo) {
     return $("<div>").dxTagBox({
-        dataSource: createFormDataStore(lookupForm),
-        value: cellInfo.value,
-        valueExpr: "_id",
-        displayExpr: "displayName",
-        showSelectionControls: true,
-        maxDisplayedTags: 3,
-        showMultiTagOnly: false,
-        applyValueMode: "useButtons",
-        searchEnabled: true,
-        onValueChanged: function(e) {
-            cellInfo.setValue(e.value)
-        },
-        onSelectionChanged: function(e) {
-            cellInfo.component.updateDimensions();
-        }
+      dataSource: createFormDataStore(lookupForm),
+      value: cellInfo.value,
+      valueExpr: "_id",
+      displayExpr: "displayName",
+      showSelectionControls: true,
+      maxDisplayedTags: 3,
+      showMultiTagOnly: false,
+      applyValueMode: "useButtons",
+      searchEnabled: true,
+      onValueChanged: function (e) {
+        cellInfo.setValue(e.value)
+      },
+      onSelectionChanged: function (e) {
+        cellInfo.component.updateDimensions();
+      }
     });
   }
 }
