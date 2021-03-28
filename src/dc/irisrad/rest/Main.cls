@@ -129,6 +129,7 @@ ClassMethod CreateForm() As %Status
     Set form.DisplayFormName = body.displayFormName
     Set form.DisplayField = body.displayProperty
     Set form.Fields = body.fields
+    Set form.ObjPermissions = body.objpermissions
     $$$TOE(sc, form.Save())
     
     /// todo: fix this
@@ -146,6 +147,9 @@ ClassMethod DeleteForm(pFormName As %String) As %Status
   Set sc = $$$OK
   Try {
     // Avoid default forms to be deleted
+    If ($FIND(pFormName, "dc.irisrad.data.RADUser") > 0) {
+      Throw ##class(%Exception.General).%New("A default form can't be deleted.")
+    }
     If ($FIND(pFormName, "dc.irisrad.default.") > 0) {
       Throw ##class(%Exception.General).%New("A default form can't be deleted.")
     }
@@ -188,7 +192,6 @@ ClassMethod updateFormDynamicObject(form, id) As %Status
 ClassMethod deleteFormObject(form, id) As %Status
 {
 	Set sc = ##class(Form.Info).formExistsStatus(form)
-  ZWrite sc
   $$$TOE(sc, ##class(Form.REST.Object).deleteFormObject(form, id))
   /// todo: fix this
   /// ugly hack for jQuery Ajax error

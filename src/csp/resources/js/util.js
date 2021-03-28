@@ -116,5 +116,8 @@ function setUserInfo(userInfo) {
 }
 
 function getUserInfo() {
-    return JSON.parse(localStorage.getItem("userInfo"));
+    var userInfo = localStorage.getItem("userInfo");
+    if (userInfo) {
+        return JSON.parse(userInfo);
+    }
 }

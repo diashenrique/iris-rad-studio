@@ -30,14 +30,32 @@ ClassMethod getFormObjects(class As %String = "", queryType As %String) As %Stat
 	Set table = ##class(%CSP.UI.Portal.SQL.Home).Quoter2($$$ClassSQLTable(class))
 	Set sql = queryBase _ table
 
-	Set sc = ..InsertUserConstraintClause(class, .sql)
+	// todo: create a DTO for this params
+	Set params = {
+		"class": (class),
+		"userClass": "dc.irisrad.data.RADUser",
+		"userField": "raduser"
+	}
+	Set sc = ..InsertUserConstraintClause(params, .sql)
+
+	// todo: create a DTO for this params
+	Set params = {
+		"class": (class),
+		"userClass": "dc.irisrad.default.UserForm",
+		"userField": "user"
+	}
+	Set sc = ..InsertUserConstraintClause(params, .sql)
 
 	Set sc = ##class(Form.JSON.SQL).WriteJSONFromSQL(sql, class)
 	Return sc
 }
 
-ClassMethod InsertUserConstraintClause(class As %String, ByRef sql As %String) As %Status
+ClassMethod InsertUserConstraintClause(pParams As %DynamicObject, ByRef sql As %String) As %Status
 {
+	Set class = pParams.class
+	Set userClass = pParams.userClass
+	Set userField = pParams.userClass
+
 	// todo: add logic for admin user
 	Set username = $ZCONVERT($USERNAME, "L")
 	If (username = ##class(dc.irisrad.data.RADUser).#RADSuperUser) {
@@ -45,8 +63,7 @@ ClassMethod InsertUserConstraintClause(class As %String, ByRef sql As %String) A
 	}
 
 	Set sc = $$$OK
-	Set userClass = "dc.irisrad.default.UserForm"
-	Set userField = "user"
+
 	Set objUserField = ##class(%Dictionary.PropertyDefinition).IDKEYOpen(class, userField)
 	// todo: add logic for detect relationship
 	If ($ISOBJECT(objUserField)) && (objUserField.Type = userClass) {
@@ -55,6 +72,7 @@ ClassMethod InsertUserConstraintClause(class As %String, ByRef sql As %String) A
 	If (class = userClass) {
 		Set sql = sql_" where username = '"_$USERNAME_"'"
 	}
+
 	Return sc
 }
 

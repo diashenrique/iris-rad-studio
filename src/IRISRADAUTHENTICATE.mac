@@ -13,7 +13,8 @@ IRISRADAuthentication(ServiceName,Username,Password,Properties,Status) PUBLIC {
 
   Set isNamespaceRADApp = ##class(dc.irisrad.data.RADUserApp).IsNamespaceRADApp(Namespace)
   If (isNamespaceRADApp) {
-    If (##class(dc.irisrad.data.RADUser).IsUserRADAdmin(Username)) {
+    Set isUserRADAdmin = ##class(dc.irisrad.data.RADUser).IsUserRADAdmin(Username)
+    If (isUserRADAdmin) {
       // user is an admin, so authenticate in default RAD namespace
       Set Status = ##class(dc.irisrad.data.RADUser).Authenticate(Username, Password, .Properties)
 

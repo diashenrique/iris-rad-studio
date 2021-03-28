@@ -32,7 +32,8 @@ XData setup
     </Invoke>
     
     <!-- create a web application for the namespace -->
-    <CSPApplication Url="/csp/${APPNAME}" Directory="${NAMESPACE_CSPAPPPATH}" ServeFiles="1" Recurse="1" Grant="%DB_${NAMESPACE},%SQL" AuthenticationMethods="32" />
+    <!-- <CSPApplication Url="/csp/${APPNAME}" Directory="${NAMESPACE_CSPAPPPATH}" ServeFiles="1" Recurse="1" Grant="%DB_${NAMESPACE},%SQL" AuthenticationMethods="32" /> -->
+    <CSPApplication Url="/csp/${APPNAME}" Directory="${NAMESPACE_CSPAPPPATH}" ServeFiles="1" Recurse="1" Grant="${RESOURCE}" AuthenticationMethods="8192" />
 
     <!-- enable the web application for the namespace -->
     <Invoke Class="dc.irisrad.Installer" Method="EnableCSPApp">
@@ -42,6 +43,7 @@ XData setup
     <!-- installRESTForms2 as we use it for base CRUD operations -->
     <Invoke Class="dc.irisrad.Installer" Method="InstallZPM">
       <Arg Value="restforms2"/>
+      <Arg Value="${NAMESPACE}"/>
     </Invoke>
 
     <!-- import forms api classes -->
@@ -70,7 +72,7 @@ XData setup
     
     <!-- create a web application for the new app -->
     <!-- <CSPApplication Url="${NEW_APP_URL}" Directory="${CSPAPPPATH}" ServeFiles="1" Recurse="1" Grant="%DB_${NAMESPACE},%SQL" AuthenticationMethods="8224" /> -->
-    <CSPApplication Url="${NEW_APP_URL}" Directory="${CSPAPPPATH}" ServeFiles="1" Recurse="1" Grant="%DB_${NAMESPACE},%SQL" AuthenticationMethods="8192" />
+    <CSPApplication Url="${NEW_APP_URL}" Directory="${CSPAPPPATH}" ServeFiles="1" Recurse="1" Grant="${RESOURCE}" AuthenticationMethods="8192" />
 
     <!-- enable the web application for the new app -->
     <Invoke Class="dc.irisrad.Installer" Method="EnableCSPApp">
@@ -82,6 +84,16 @@ XData setup
       <Arg Value="${RESTAPPNAME}"/>
       <Arg Value="${NAMESPACE}"/>
       <Arg Value="dc.irisrad.rest.Main"/>
+      <Arg Value="${RESOURCE}"/>
+    </Invoke>
+
+    <!-- create a web application for authenticated access (sign up) -->
+    <Invoke Class="dc.irisrad.Installer" Method="createRESTApp">
+      <Arg Value="${REST_UNAUTH_APPNAME}"/>
+      <Arg Value="${NAMESPACE}"/>
+      <Arg Value="dc.irisrad.rest.UnAuth"/>
+      <Arg Value=":IRIS_RAD_UNAUTH"/>
+      <Arg Value="64"/>
     </Invoke>
 
     <!-- remove forms not used -->
@@ -105,7 +117,67 @@ XData setup
     <Arg Value="${CSPAPPPATH}"/>
     <Arg Value="${RESTAPPNAME}"/>
   </Invoke>
+
+  <!-- change the user form of static assets copied -->
+  <Invoke Class="dc.irisrad.Installer" Method="SetUserForm">
+    <Arg Value="${CSPAPPPATH}"/>
+  </Invoke>
 </Manifest>
+}
+
+ClassMethod DeployApp(pAppName As %String, pAppDesc As %String, pFormsCSV As %String, pForceRoutines As %Boolean = 0) As %Status
+{
+  // zn "%sys" do $SYSTEM.OBJ.Load("/opt/irisapp/src/dc/irisrad/Installer.cls","c") do ##class(dc.irisrad.Installer).DeployApp("test", "Test app", "User.forms.grocery.GroceryListForm,User.forms.grocery.GroceryProductForm", 1)
+  Set sc = $$$OK
+
+  $$$TOE(sc, ..ValidateCreation(pAppName))
+
+  Set newFormsPath = "/tmp/"_pAppName
+  $$$TOE(sc, ..ExportForms(..#DefaulSystemNS, pAppName, newFormsPath, pFormsCSV))
+
+  Set pVars("APPNAME") = pAppName
+  Set pVars("APP_DESC") = pAppDesc
+  Set pVars("SRC_PATH") = "/opt/irisapp/src/csp"
+  Set pVars("NEW_APP_URL") = "/csp/"_pVars("APPNAME")
+  Set pVars("NEW_APP_FORMS_PATH") = newFormsPath
+  Set pVars("APPPATH") = "/opt/"_$ZCONVERT(pVars("APPNAME"), "L")
+  Set pVars("NAMESPACE_CSPAPPPATH") = "/opt/"_$ZCONVERT(pVars("APPNAME"), "L")_"/csp"
+  Set pVars("FORMSCLASSPATH") = "/opt/irisapp/src"
+  Set pVars("CSPAPPPATH") = pVars("APPPATH")_"/csp/"
+  Set pVars("DBPATH") = "/usr/irissys/mgr/"_$ZCONVERT(pVars("APPNAME"), "U")_"_APP"
+  Set pVars("DBNAME") = $ZCONVERT(pVars("APPNAME"), "U")_"_APP"
+  Set pVars("NAMESPACE") = $ZCONVERT(pVars("APPNAME"), "U")_"_APP"
+  Set pVars("RESOURCE") = "%DB_"_pVars("DBNAME")
+  Set pVars("RESTAPPNAME") = "/"_pVars("APPNAME")_"/forms"
+  Set pVars("REST_UNAUTH_APPNAME") = "/"_pVars("APPNAME")_"/forms/unauth"
+  Set pVars("FORCEROUTINES") = pForceRoutines
+  Set sc = ##class(dc.irisrad.Installer).setup(.pVars)
+
+  // GRANT * ON Data.Countries TO %DB_TEST3_APP
+  #; Kill roleInfoArray
+  #; Set roleInfoArray($I(roleInfoArray)) = $LB("SELECT,INSERT", "dc_irisrad_default.UserForm", "IRIS_RAD_UNAUTH")
+  #; Set roleInfoArray($I(roleInfoArray)) = $LB("SELECT,INSERT", "dc_irisrad_data.RADUser", "IRIS_RAD_UNAUTH")
+  #; $$$TOE(sc, ##class(App.Installer).GrantTablesRoleUnAuth(pVars("NAMESPACE"), .roleInfoArray))
+  $$$TOE(sc, ##class(App.Installer).GrantRolesForUnauthAcess(pVars("NAMESPACE")))
+  
+  // todo: review which accesses should be granted
+  // GRANT * ON SCHEMA Data TO %DB_TEST1_APP
+  Kill roleInfoArray
+  Set roleInfoArray($I(roleInfoArray)) = $LB("*", "SCHEMA Data", pVars("RESOURCE"))
+  Set roleInfoArray($I(roleInfoArray)) = $LB("*", "SCHEMA Form_Test", pVars("RESOURCE"))
+  Set roleInfoArray($I(roleInfoArray)) = $LB("*", "SCHEMA User_forms", pVars("RESOURCE"))
+  Set roleInfoArray($I(roleInfoArray)) = $LB("SELECT,UPDATE", "dc_irisrad_default.UserForm", pVars("RESOURCE"))
+  $$$TOE(sc, ##class(App.Installer).GrantTablesRoleUnAuth(pVars("NAMESPACE"), .roleInfoArray))
+
+  $$$TOE(sc, ..RegisterApp(.pVars))
+
+  Return sc
+}
+
+ClassMethod setup(ByRef pVars, pLogLevel As %Integer = 3, pInstaller As %Installer.Installer, pLogger As %Installer.AbstractLogger) As %Status [ CodeMode = objectgenerator, Internal ]
+{
+  #; Let XGL document generate code for this method. 
+  Quit ##class(%Installer.Manifest).%Generate(%compiledclass, %code, "setup")
 }
 
 /// Check all validation rules for app creation
@@ -137,44 +209,6 @@ ClassMethod ValidateCreation(pAppName As %String) As %Status
   }
 
   Return sc
-}
-
-ClassMethod DeployApp(pAppName As %String, pAppDesc As %String, pFormsCSV As %String, pForceRoutines As %Boolean = 0) As %Status
-{
-  // zn "%sys" do $SYSTEM.OBJ.Load("/opt/irisapp/src/dc/irisrad/Installer.cls","c") do ##class(dc.irisrad.Installer).DeployApp("test", "Test app", "User.forms.grocery.GroceryListForm,User.forms.grocery.GroceryProductForm", 1)
-  Set sc = $$$OK
-
-  $$$TOE(sc, ..ValidateCreation(pAppName))
-
-  Set newFormsPath = "/tmp/"_pAppName
-  $$$TOE(sc, ..ExportForms(..#DefaulSystemNS, pAppName, newFormsPath, pFormsCSV))
-
-  Set pVars("APPNAME") = pAppName
-  Set pVars("APP_DESC") = pAppDesc
-  Set pVars("SRC_PATH") = "/opt/irisapp/src/csp"
-  Set pVars("NEW_APP_URL") = "/csp/"_pVars("APPNAME")
-  Set pVars("NEW_APP_FORMS_PATH") = newFormsPath
-  Set pVars("APPPATH") = "/opt/"_$ZCONVERT(pVars("APPNAME"), "L")
-  Set pVars("NAMESPACE_CSPAPPPATH") = "/opt/"_$ZCONVERT(pVars("APPNAME"), "L")_"/csp"
-  Set pVars("FORMSCLASSPATH") = "/opt/irisapp/src"
-  Set pVars("CSPAPPPATH") = pVars("APPPATH")_"/csp/"
-  Set pVars("DBPATH") = "/usr/irissys/mgr/"_$ZCONVERT(pVars("APPNAME"), "U")_"_APP"
-  Set pVars("DBNAME") = $ZCONVERT(pVars("APPNAME"), "U")_"_APP"
-  Set pVars("NAMESPACE") = $ZCONVERT(pVars("APPNAME"), "U")_"_APP"
-  Set pVars("RESOURCE") = "%DB_"_pVars("DBNAME")
-  Set pVars("RESTAPPNAME") = "/"_pVars("APPNAME")_"/forms"
-  Set pVars("FORCEROUTINES") = pForceRoutines
-  Set sc = ##class(dc.irisrad.Installer).setup(.pVars)
-
-  $$$TOE(sc, ..RegisterApp(.pVars))
-
-  Return sc
-}
-
-ClassMethod setup(ByRef pVars, pLogLevel As %Integer = 3, pInstaller As %Installer.Installer, pLogger As %Installer.AbstractLogger) As %Status [ CodeMode = objectgenerator, Internal ]
-{
-  #; Let XGL document generate code for this method. 
-  Quit ##class(%Installer.Manifest).%Generate(%compiledclass, %code, "setup")
 }
 
 ClassMethod RoutineExists(pRoutineName As %String, pNamespace As %String) As %Boolean
@@ -226,43 +260,47 @@ ClassMethod InstallDelegation(pSoruceDir As %String, pForceRoutines As %Boolean 
 
 ClassMethod InstallZPM(pPackageName As %String, pNamespace As %String = "") As %Status
 {
+  zw pPackageName,pNamespace
   Set sc = $$$OK
   Set originalNS = $NAMESPACE
   Try {
-    If (pNamespace '= "") {
-      New $NAMESPACE
-      Set $NAMESPACE = pNamespace
-    }
-    ZPm "install "_pPackageName
+    ZNspace "%SYS"
+    Set sc = ##class(App.Installer).InstallZPM(pPackageName, pNamespace)
   }
   Catch ex {
     Set sc=ex.AsStatus()
   }
   Set $NAMESPACE = originalNS
+  zw sc 
   Return sc
 }
 
-ClassMethod createRESTApp(pAppName As %String, pNamespace As %String, pDispatchClass As %String) As %Status
+ClassMethod createRESTApp(pAppName As %String, pNamespace As %String, pDispatchClass As %String, pRoles As %String, pAutheEnabled As %Integer = 8192) As %Status
 {
   Set sc = $$$OK
   Set originalNS = $NAMESPACE
   Try {
     New $NAMESPACE
     Set $NAMESPACE = "%SYS"
+    /*
     If '##class(Security.Applications).Exists(pAppName) {
       #; Set props("AutheEnabled") = 8224
       Set props("AutheEnabled") = 8192
       Set props("NameSpace") = pNamespace
       Set props("IsNameSpaceDefault") = $$$NO
       Set props("DispatchClass") = pDispatchClass
-      Set props("MatchRoles")=":%DB_%DEFAULT"
+      Set props("MatchRoles") = pRoles
       Set sc = ##class(Security.Applications).Create(pAppName, .props)
     }
+    */
+    zw pAppName, pNamespace, pDispatchClass, pRoles, pAutheEnabled
+    Set sc = ##class(App.Installer).createRESTApp(pAppName, pNamespace, pDispatchClass, pRoles, pAutheEnabled)
   }
   Catch ex {
     Set sc=ex.AsStatus()
   }
   Set $NAMESPACE = originalNS
+  zw sc
   Return sc
 }
 
@@ -281,10 +319,26 @@ ClassMethod SetRESTApp(pCSPDirectory As %String, pNewRESTAppName As %String) As 
   // todo: change to use some IRIS API instead of linux commands
   // naive linux escaping code
   Set pNewRESTAppName = $REPLACE(pNewRESTAppName, "/", "\/")
+  // todo: iterate over all js files
   // set the new app REST app name
+  Do $ZF(-1, "sed -i 's/"_oldRESTAppName_"/"_pNewRESTAppName_"/g' "_pCSPDirectory_"/resources/js/apps.js")
   Do $ZF(-1, "sed -i 's/"_oldRESTAppName_"/"_pNewRESTAppName_"/g' "_pCSPDirectory_"/resources/js/classcreator.js")
   Do $ZF(-1, "sed -i 's/"_oldRESTAppName_"/"_pNewRESTAppName_"/g' "_pCSPDirectory_"/resources/js/customdash2.js")
+  Do $ZF(-1, "sed -i 's/"_oldRESTAppName_"/"_pNewRESTAppName_"/g' "_pCSPDirectory_"/resources/js/deploy.js")
+  Do $ZF(-1, "sed -i 's/"_oldRESTAppName_"/"_pNewRESTAppName_"/g' "_pCSPDirectory_"/resources/js/signup.js")
   Do $ZF(-1, "sed -i 's/"_oldRESTAppName_"/"_pNewRESTAppName_"/g' "_pCSPDirectory_"/resources/js/util.js")
+  Return sc
+}
+
+ClassMethod SetUserForm(pCSPDirectory As %String) As %Status
+{
+  Set sc = $$$OK
+  Set oldUserForm = "dc.irisrad.data.RADUser"
+  // todo: change to use some IRIS API instead of linux commands
+  Set newUserForm = "dc.irisrad.default.UserForm"
+  // todo: iterate over all js files
+  // set the common form class for applications created by RAD
+  Do $ZF(-1, "sed -i 's/"_oldUserForm_"/"_newUserForm_"/g' "_pCSPDirectory_"/resources/js/signup.js")
   Return sc
 }
 
