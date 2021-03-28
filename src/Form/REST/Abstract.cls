@@ -108,6 +108,8 @@ ClassMethod getDebugInfo() As %ZEN.proxyObject
 	set obj = ##class(%ZEN.proxyObject).%New()
 	set obj.stack = ..getStackInfo()
 	set obj.objlasterror = $system.Status.GetErrorText($get(%objlasterror))
+	set obj.orginalStack = $ZCONVERT($lts($lg($lg($e($get(%objlasterror),3,*), 1), 10)), "O", "JSON")
+    set obj.lastsql = $ZCONVERT(%RESTFORMS2LASTSQL, "O", "JSON")
 	set obj.request = %request
 	set obj.response = %response
 	set obj.user = $username
