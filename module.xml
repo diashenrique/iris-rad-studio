@@ -9,33 +9,22 @@
       <Packaging>module</Packaging>
       <Dependencies>
         <ModuleReference>
-          <Name>restforms2</Name>
-          <Version>1.0.8</Version>
-        </ModuleReference>
-        <ModuleReference>
-          <Name>restforms2-ui</Name>
-          <Version>1.0.0</Version>
-        </ModuleReference>
-        <ModuleReference>
           <Name>dsw</Name>
           <Version>3.1.3</Version>
         </ModuleReference>
+        <ModuleReference>
+          <Name>AnalyzeThis</Name>
+          <Version>1.*</Version>
+        </ModuleReference>
       </Dependencies>
-      <CSPApplication CookiePath="/mdx2json/" DispatchClass="MDX2JSON.REST" PasswordAuthEnabled="1" UnauthenticatedEnabled="1" Url="/MDX2JSON" UseSessionCookie="1"/>
-      <CSPApplication CookiePath="/csp/irisapp/" DefaultTimeout="900" DeployPath="/opt/irisapp/csp/" MatchRoles=":%DB_IRISAPP:%SQL" PasswordAuthEnabled="1" Recurse="1" ServeFiles="1" ServeFilesTimeout="3600" UnauthenticatedEnabled="0" Url="/csp/irisapp" UseSessionCookie="2"/>
+      <CSPApplication CookiePath="/csp/rad/" DefaultTimeout="900" DeployPath="/opt/irisapp/csp/" MatchRoles=":{$dbrole}" PasswordAuthEnabled="1" Recurse="1" ServeFiles="1" ServeFilesTimeout="3600" UnauthenticatedEnabled="0" Url="/csp/rad" UseSessionCookie="2"/>
       <CSPApplication CookiePath="/csp/irisapp/api/" DefaultTimeout="900" DispatchClass="diashenrique.REST.Dispatch" MatchRoles=":%All" PasswordAuthEnabled="1" Recurse="1" ServeFiles="1" ServeFilesTimeout="3600" UnauthenticatedEnabled="0" Url="/csp/irisapp/api" UseSessionCookie="2"/>
-      <CSPApplication CookiePath="/dsw" DeployPath="${cspdir}dsw/" PasswordAuthEnabled="1" Recurse="1" ServeFiles="1" UnauthenticatedEnabled="0" Url="/dsw" UseSessionCookie="1"/>
-      <CSPApplication AuthenticationMethods="16416" CookiePath="/irisrad/" DispatchClass="dc.irisrad.rest.Main" MatchRoles=":%DB_%DEFAULT" Recurse="1" ServeFiles="1" Url="/forms" UseSessionCookie="1"/>
-      <Resource Directory="cls" Name="AnalyzeThis.PKG"/>
-      <Resource Name="Data.PKG"/>
-      <Resource Name="Form.PKG"/>
-      <Resource Name="IRISRADAuthentication.MAC"/>
-      <Resource Name="User.PKG"/>
-      <Resource Name="ZAUTHENTICATE.MAC"/>
-      <Resource Name="dc.PKG"/>
-      <Resource Directory="cls" Name="diashenrique.PKG"/>
-      <CSPApplication CookiePath="/restforms2-ui" DeployPath="${cspdir}restforms2-ui/" MatchRoles=":%DB_IRISAPP" PasswordAuthEnabled="1" Recurse="1" ServeFiles="1" UnauthenticatedEnabled="0" Url="/restforms2-ui" UseSessionCookie="1"/>
+      <CSPApplication AuthenticationMethods="16416" CookiePath="/irisrad/" DispatchClass="dc.irisrad.rest.Main" MatchRoles=":{$dbrole}" Recurse="1" ServeFiles="1" Url="/irisrad" UseSessionCookie="1"/>
       <SourcesRoot>src</SourcesRoot>
+      <Resource Name="Form.PKG"/>
+      <Resource Name="User.PKG"/>
+      <Resource Name="dc.irisrad.PKG"/>
+      <Resource Name="diashenrique.PKG"/>
     </Module>
   </Document>
 </Export>
