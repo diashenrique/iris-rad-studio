@@ -5,7 +5,7 @@
     "iris.script": "objectscript"
   },
   "objectscript.conn": {
-    "ns": "IRISAPP",
+    "ns": "USER",
     "username": "_SYSTEM",
     "password": "SYS",
     "active": true,
@@ -17,7 +17,7 @@
       "Portal": "http://localhost:${port}/csp/sys/%25CSP.Portal.Home.zen?$NAMESPACE=%25SYS",
       "RESTForms2-UI": "http://localhost:${port}/restforms2-ui/index.html",
       "Dashboard": "http://localhost:${port}/csp/irisapp/index.html",
-      "RAD": "http://localhost:${port}/csp/irisapp/rad.html",
+      "RAD": "http://localhost:${port}/csp/rad/login.html",
       "restforms2-devextreme-poc": "http://localhost:${port}/csp/irisapp/index.html?formName=Form.Test.Person"
     }
   }

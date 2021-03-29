@@ -1,0 +1,36 @@
+;do $System.OBJ.LoadDir("/opt/irisbuild/src","ck",,1)
+
+zn "%SYS"
+Do ##class(Security.Users).UnExpireUserPasswords("*")
+
+
+write "Installing routinies for delegated authentication...",! 
+do $System.OBJ.Load("/opt/irisbuild/src/IRISRADAUTHENTICATE.mac","ck",,1) 
+do $System.OBJ.Load("/opt/irisbuild/src/ZAUTHENTICATE.mac","ck",,1) 
+set sc = ##Class(Security.System).Get("SYSTEM",.Properties) 
+zw sc 
+set Properties("AutheEnabled") = $ZB(Properties("AutheEnabled"),8192,7) 
+set sc = ##Class(Security.System).Modify("SYSTEM",.Properties) 
+kill webProperties 
+write "Modify /csp/rad application path...",! 
+set webName = "/csp/rad" 
+set webProperties("Path") = "/opt/rad/src/csp/" 
+set sc = ##class(Security.Applications).Modify(webName, .webProperties) 
+write "Add Role for CSPSystem User...",! 
+set sc=##class(Security.Users).AddRoles("CSPSystem","%DB_%DEFAULT") 
+
+zn "USER"
+zpm "load /opt/irisbuild/ -v":1:1
+
+//do $SYSTEM.OBJ.Load("Installer.cls", "ck") \
+zpm "install csvgen" 
+do ##class(Form.Util.Init).populateTestForms() 
+write "Installing RAD superuser",! 
+write ##class(dc.irisrad.data.RADUser).CreateSuperUser() 
+
+
+
+
+
+
+halt
