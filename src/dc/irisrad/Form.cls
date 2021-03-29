@@ -11,6 +11,8 @@ Property DisplayField As %String [ Required ];
 
 Property Fields As %DynamicArray [ Required ];
 
+Property ObjPermissions As %String [ InitialExpression = "CRUD", Required ];
+
 Method Save() As %Status
 {
   Set sc = $$$OK
@@ -32,7 +34,7 @@ Method Save() As %Status
       "value": (formName)
     },{
       "name": "OBJPERMISSIONS",
-      "value": "CRUD"
+      "value": (..ObjPermissions)
     },{
       "name": "DISPLAYPROPERTY",
       "value": (..DisplayField)
@@ -141,9 +143,9 @@ ClassMethod GetXDataContent(pXDataID As %String)
   }
 }
 
+/// todo:
 Method CreateDefaulQuery()
 {
-  // todo:
   /*
   Quit "SELECT name, spouse->name spouse, "_
     "(SELECT LIST(name) FROM Form_Test.Person WHERE ID %INLIST dc_irisrad.Form_FlattenList(User_forms_TestForm1.children)) children "_

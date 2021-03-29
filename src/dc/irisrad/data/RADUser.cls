@@ -1,14 +1,22 @@
 Include (%occStatus, %occErrors)
 
 /// System's RAD admins
-Class dc.irisrad.data.RADUser Extends %Persistent
+Class dc.irisrad.data.RADUser Extends (%Persistent, dc.irisrad.FormAdaptor) [ Inheritance = right, Not ProcedureBlock ]
 {
 
-Property Username As %String;
+Property Username As %Library.String(%JSONINCLUDE = "INOUT", %JSONREFERENCE = "ID", DISPLAYNAME = "User name") [ Required ];
 
-Property Password As %String;
+Property Password As dc.irisrad.datatype.Password(%JSONINCLUDE = "INOUT", %JSONREFERENCE = "ID", DISPLAYNAME = "Password") [ Required ];
 
-Property FullName As %String;
+Property FullName As %Library.String(%JSONINCLUDE = "INOUT", %JSONREFERENCE = "ID", DISPLAYNAME = "Full name") [ Required ];
+
+Property Enabled As %Library.Boolean(%JSONINCLUDE = "INOUT", %JSONREFERENCE = "ID", DISPLAYNAME = "Enabled") [ Required ];
+
+Parameter DISPLAYPROPERTY = "Username";
+
+Parameter FORMNAME = "RAD Users";
+
+Parameter OBJPERMISSIONS = "CRUD";
 
 Index IdxUsername On Username [ Unique ];
 
@@ -70,6 +78,7 @@ ClassMethod CreateSuperUser(pPassword As %String = "SYS") As %Status
   Set superuser.Username = ..#RADSuperUser
   Set superuser.Password = pPassword
   Set superuser.FullName = "IRIS RAD Admin"
+  Set superuser.Enabled = 1
   Set sc = superuser.%Save()
   Return sc
 }
@@ -88,6 +97,9 @@ Storage Default
 </Value>
 <Value name="4">
 <Value>FullName</Value>
+</Value>
+<Value name="5">
+<Value>Enabled</Value>
 </Value>
 </Data>
 <DataLocation>^dc.irisrad.data.RADUserD</DataLocation>

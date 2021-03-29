@@ -1,14 +1,15 @@
 function createMenu() {
   var currPage = location.pathname.split('/').slice(-1)[0];
   var userInfo = getUserInfo();
-  
-  if (userInfo.admin === 1) menuApps('#menu', currPage);
-  menuForms('#menu', currPage);
-  if (userInfo.admin === 1) menuClassCreator('#menu', currPage);
-  if (userInfo.admin === 1) menuDeploy('#menu', currPage);
-  if (userInfo.admin === 1) menuWizard('#menu', currPage);
-  menuDSW('#menu');
-  menuLogout('#menu');
+  if (userInfo) {
+    menuForms('#menu', currPage);
+    if (userInfo.admin === 1) menuApps('#menu', currPage);
+    if (userInfo.admin === 1) menuClassCreator('#menu', currPage);
+    if (userInfo.admin === 1) menuDeploy('#menu', currPage);
+    if (userInfo.admin === 1) menuWizard('#menu', currPage);
+    menuDSW('#menu');
+    menuLogout('#menu');
+  }
 }
 
 function menuApps(element, currPage) {
@@ -26,8 +27,8 @@ function menuForms(element, currPage) {
   $(element).append(`
   <li class="menu-item ${currPage === 'rad.html' ? 'has-active' : ''}">
     <a href="rad.html" class="menu-link">
-      <span class="menu-icon fas fa-home"></span>
-      <span class="menu-text">CRUD Extreme</span>
+      <span class="menu-icon fa fa-clone"></span>
+      <span class="menu-text">Forms</span>
     </a>
     <!-- child menu -->
     <ul id="menu-forms" class="menu">

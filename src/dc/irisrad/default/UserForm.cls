@@ -77,7 +77,7 @@ ClassMethod Authenticate(pUsername As %String, pPassword As %String, ByRef pProp
   Set pProperties("FullName") = fullName
   Set pProperties("Comment") = ""
   // todo: review the right roles
-  Set pProperties("Roles") = "%All"
+  Set pProperties("Roles") = "%DB_"_$NAMESPACE
   Set pProperties("NameSpace") = $NAMESPACE
   Set pProperties("Routine") = ""
   Set pProperties("Password") = encPsw
