@@ -16,12 +16,15 @@
           <Name>AnalyzeThis</Name>
           <Version>1.*</Version>
         </ModuleReference>
+        <ModuleReference>
+          <Name>RESTFormsRAD</Name>
+          <Version>1.*</Version>
+        </ModuleReference>
       </Dependencies>
-      <CSPApplication CookiePath="/csp/rad/" DefaultTimeout="900" DeployPath="/opt/irisapp/csp/" MatchRoles=":{$dbrole}" PasswordAuthEnabled="1" Recurse="1" ServeFiles="1" ServeFilesTimeout="3600" UnauthenticatedEnabled="0" Url="/csp/rad" UseSessionCookie="2"/>
+      <CSPApplication CookiePath="/csp/rad/" DefaultTimeout="900" SourcePath="/src/csp" DeployPath="${cspdir}/csp/${namespace}/" MatchRoles=":{$dbrole}" PasswordAuthEnabled="1" Recurse="1" ServeFiles="1" ServeFilesTimeout="3600" UnauthenticatedEnabled="0" Url="/csp/rad" UseSessionCookie="2"/>
       <CSPApplication CookiePath="/csp/irisapp/api/" DefaultTimeout="900" DispatchClass="diashenrique.REST.Dispatch" MatchRoles=":%All" PasswordAuthEnabled="1" Recurse="1" ServeFiles="1" ServeFilesTimeout="3600" UnauthenticatedEnabled="0" Url="/csp/irisapp/api" UseSessionCookie="2"/>
       <CSPApplication AuthenticationMethods="16416" CookiePath="/irisrad/" DispatchClass="dc.irisrad.rest.Main" MatchRoles=":{$dbrole}" Recurse="1" ServeFiles="1" Url="/irisrad" UseSessionCookie="1"/>
       <SourcesRoot>src</SourcesRoot>
-      <Resource Name="Form.PKG"/>
       <Resource Name="User.PKG"/>
       <Resource Name="dc.irisrad.PKG"/>
       <Resource Name="diashenrique.PKG"/>
