@@ -3,36 +3,31 @@
   <Document name="iris-rad-studio.ZPM">
     <Module>
       <Name>iris-rad-studio</Name>
-      <Version>1.0.1</Version>
+      <Version>1.0.0</Version>
       <Description>IRIS RAD Studio it's a low-code solution that came to make the developer's life easier</Description>
       <Keywords>rad,crud,low-code,iris,docker</Keywords>
       <Packaging>module</Packaging>
       <Dependencies>
         <ModuleReference>
-          <Name>restforms2</Name>
-          <Version>1.0.8</Version>
-        </ModuleReference>
-        <ModuleReference>
-          <Name>restforms2-ui</Name>
-          <Version>1.0.0</Version>
-        </ModuleReference>
-        <ModuleReference>
           <Name>dsw</Name>
-          <Version>3.1.11</Version>
+          <Version>3.1.3</Version>
+        </ModuleReference>
+        <ModuleReference>
+          <Name>AnalyzeThis</Name>
+          <Version>1.*</Version>
+        </ModuleReference>
+        <ModuleReference>
+          <Name>RESTFormsRAD</Name>
+          <Version>1.*</Version>
         </ModuleReference>
       </Dependencies>
-      <Resource Directory="src/cls" Name="AnalyzeThis.PKG"/>
-      <Resource Directory="src" Name="Data.PKG"/>
-      <Resource Directory="src" Name="IRISRADAUTHENTICATE.MAC"/>
-      <Resource Directory="src" Name="User.PKG"/>
-      <Resource Directory="src" Name="ZAUTHENTICATE.MAC"/>
-      <Resource Directory="src" Name="dc.PKG"/>
-      <Resource Directory="src/cls" Name="diashenrique.PKG"/>
-      <Resource Directory="src" Name="App.Installer.CLS"/>
-      <SourcesRoot>/opt/irisapp</SourcesRoot>
-      <Invokes>
-        <Invoke Class="App.Installer" Method="setup"></Invoke>
-      </Invokes>
+      <CSPApplication CookiePath="/csp/rad/" DefaultTimeout="900" SourcePath="/src/csp" DeployPath="${cspdir}/csp/${namespace}/" MatchRoles=":{$dbrole}" PasswordAuthEnabled="1" Recurse="1" ServeFiles="1" ServeFilesTimeout="3600" UnauthenticatedEnabled="0" Url="/csp/rad" UseSessionCookie="2"/>
+      <CSPApplication CookiePath="/csp/irisapp/api/" DefaultTimeout="900" DispatchClass="diashenrique.REST.Dispatch" MatchRoles=":%All" PasswordAuthEnabled="1" Recurse="1" ServeFiles="1" ServeFilesTimeout="3600" UnauthenticatedEnabled="0" Url="/csp/irisapp/api" UseSessionCookie="2"/>
+      <CSPApplication AuthenticationMethods="16416" CookiePath="/irisrad/" DispatchClass="dc.irisrad.rest.Main" MatchRoles=":%All" Recurse="1" ServeFiles="1" Url="/irisrad" UseSessionCookie="1"/>
+      <SourcesRoot>src</SourcesRoot>
+      <Resource Name="User.PKG"/>
+      <Resource Name="dc.irisrad.PKG"/>
+      <Resource Name="diashenrique.PKG"/>
     </Module>
   </Document>
 </Export>
