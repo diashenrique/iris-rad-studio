@@ -3,10 +3,16 @@ function createMenu() {
   var userInfo = getUserInfo();
   if (userInfo) {
     menuForms('#menu', currPage);
+    /*
     if (userInfo.admin === 1) menuApps('#menu', currPage);
     if (userInfo.admin === 1) menuClassCreator('#menu', currPage);
     if (userInfo.admin === 1) menuDeploy('#menu', currPage);
     if (userInfo.admin === 1) menuWizard('#menu', currPage);
+    */
+    menuApps('#menu', currPage);
+    menuClassCreator('#menu', currPage);
+    menuDeploy('#menu', currPage);
+    menuWizard('#menu', currPage);
     menuDSW('#menu');
     menuLogout('#menu');
   }
