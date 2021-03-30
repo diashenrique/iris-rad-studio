@@ -64,6 +64,10 @@ XData UrlMap [ XMLNamespace = "http://www.intersystems.com/urlmap" ]
 
 ClassMethod OnPreDispatch(pUrl As %String, pMethod As %String, ByRef pContinue As %Boolean) As %Status
 {
+  // todo: check why the security doesn't work
+  // "workaround" 
+  Quit $$$OK
+  
   // todo: try to use native REST security SECURITYRESOURCE parameter (https://docs.intersystems.com/irislatest/csp/docbook/Doc.View.cls?KEY=GREST_securing#GREST_authorization_securityresourceparam)
   Set username = $USERNAME
   Set appRef = ##class(dc.irisrad.data.RADUserApp).IdxAppNamespaceOpen($NAMESPACE)
