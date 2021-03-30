@@ -1,5 +1,5 @@
-ROUTINE IRISRADAuthentication
-IRISRADAuthentication(ServiceName,Username,Password,Properties,Status) PUBLIC {
+ROUTINE IRISRADAUTHENTICATE
+IRISRADAUTHENTICATE(ServiceName,Username,Password,Properties,Status) PUBLIC {
   #include %occStatus
   #include %occErrors
 

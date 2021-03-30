@@ -22,53 +22,12 @@ COPY  src src
 SHELL ["/irissession.sh"]
 
 RUN \
-  do $SYSTEM.OBJ.Load("Installer.cls", "ck") \
-  set sc = ##class(App.Installer).setup() \
-  /*do $system.OBJ.Load("/tmp/deps/zpm.xml", "ck")*/ \
-  /*zn "IRISAPP"*/ \
-  /*zpm "install restforms2"*/ \
-  /*zpm "install dsw"*/ \
-  /*do EnableDeepSee^%SYS.cspServer("/csp/irisapp/")/* \
-  /*zpm "install csvgen"*/ \
-  /*do $System.OBJ.LoadDir("/opt/irisapp/src","ck",,1)*/ \
-  /*do ##class(Form.Util.Init).populateTestForms()*/ \
-  /*write "Installing RAD superuser",!*/ \
-  /*write ##class(dc.irisrad.data.RADUser).CreateSuperUser()*/ \
-  zn "%SYS" \
-  /*write "Installing routinies for delegated authentication...",!*/ \
-  /*do $System.OBJ.Load("/opt/irisapp/src/IRISRADAUTHENTICATE.mac","ck",,1)*/ \
-  /*do $System.OBJ.Load("/opt/irisapp/src/ZAUTHENTICATE.mac","ck",,1)*/ \
-  /*set sc = ##Class(Security.System).Get("SYSTEM",.Properties)*/ \
-  /*zw sc*/ \
-  /*set Properties("AutheEnabled") = $ZB(Properties("AutheEnabled"),8192,7)*/ \
-  /*set sc = ##Class(Security.System).Modify("SYSTEM",.Properties)*/ \
-  /*write "Creating IRIS RAD rest application...",!*/ \
-  /*set webName = "/irisrad"*/ \
-  /*set webProperties("NameSpace") = "IRISAPP"*/ \
-  /*set webProperties("IsNameSpaceDefault") = 0*/ \
-  /*set webProperties("AutheEnabled") = 8224*/ \
-  /*set webProperties("AutheEnabled") = 8192*/ \
-  /*set webProperties("CookiePath") = "/irisrad/"*/ \
-  /*set webProperties("MatchRoles") = ":%DB_%DEFAULT"*/ \
-  /*set webProperties("DispatchClass") = "dc.irisrad.rest.Main"*/ \
-  /*set sc = ##class(Security.Applications).Create(webName, .webProperties)*/ \
-  /*kill webProperties*/ \
-  /*write "Modify /csp/irisapp application path...",!*/ \
-  /*set webName = "/csp/irisapp"*/ \
-  /*set webProperties("Path") = "/opt/irisapp/src/csp/"*/ \
-  /*set sc = ##class(Security.Applications).Modify(webName, .webProperties)*/ \
-  /*write "Add Role for CSPSystem User...",!*/ \
-  /*set sc=##class(Security.Users).AddRoles("CSPSystem","%DB_%DEFAULT")*/ \
-  /*write "Creating role for unauthenticated access",!*/ \
-  /*Kill roleInfoArray*/ \
-  /*Set roleInfoArray($I(roleInfoArray)) = $LB("SELECT,INSERT", "dc_irisrad_default.UserForm", "IRIS_RAD_UNAUTH")*/ \
-  /*Set roleInfoArray($I(roleInfoArray)) = $LB("SELECT,INSERT", "dc_irisrad_data.RADUser", "IRIS_RAD_UNAUTH")*/ \
-  /*set sc = ##class(App.Installer).GrantTablesRoleUnAuth("IRISAPP",.roleInfoArray)*/ \
-  /*write sc,*/!
+  do $SYSTEM.OBJ.Load("/opt/irisapp/src/App/Installer.cls", "ck") \
+  set sc = ##class(App.Installer).InstallFromDockerfile()
 
 # bringing the standard shell back
 SHELL ["/bin/bash", "-c"]
 
 USER root
 RUN chown -R irisuser:irisuser /opt
-RUN chown -R irisuser:irisuser /usr/irissys/csp/forms
+# RUN chown -R irisuser:irisuser /usr/irissys/csp/forms

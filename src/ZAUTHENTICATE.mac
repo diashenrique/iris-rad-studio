@@ -5,7 +5,7 @@ ZAUTHENTICATE(ServiceName,Username,Password,Properties) PUBLIC {
   
   Set status = $$$OK
 
-  Do IRISRADAuthentication^IRISRADAuthentication(ServiceName,Username,Password,.Properties,.status)
+  Do IRISRADAUTHENTICATE^IRISRADAUTHENTICATE(ServiceName,Username,Password,.Properties,.status)
   If ($NAMESPACE '= "%SYS") {
     ZNspace "%SYS"
   }
