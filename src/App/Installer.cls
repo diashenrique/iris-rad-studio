@@ -29,10 +29,6 @@ XData setup
       </Configuration>
     </Namespace>
   </If>
-  <Namespace Name="${NAMESPACE}" Code="${DBNAME}" Data="${DBNAME}">
-    <CSPApplication Url="${CSPURL}" Directory="${APPPATH}/csp/" ServeFiles="1" Recurse="1" Grant="%DB_${NAMESPACE},%SQL" AuthenticationMethods="8192" />
-    <Import File="${SOURCESPATH}/cls" Recurse="1"/>
-  </Namespace>
   
   <Invoke Class="App.Installer" Method="LoadZPM">
   <Arg Value="${NAMESPACE}"/>
@@ -56,7 +52,22 @@ XData setup
   </If>
 
   <If Condition='(${UseInstaller}=1)'>
-  
+  <Log Text="Creating IRIS RAD rest application..." Level="0"></Log>
+  <Invoke Class="App.Installer" Method="createRESTApp">
+    <Arg Value="/irisrad"/>
+    <Arg Value="${NAMESPACE}"/>
+    <Arg Value="dc.irisrad.rest.Main"/>
+    <Arg Value=":%DB_%DEFAULT"/>
+    <Arg Value="8192"/>
+  </Invoke>
+  <Import File="${SOURCESPATH}" Flags="ck" Recurse="1" IgnoreErrors="1">
+    </Import>
+
+   <Namespace Name="${NAMESPACE}" Code="${DBNAME}" Data="${DBNAME}">
+    <CSPApplication Url="${CSPURL}" Directory="${APPPATH}/csp/" ServeFiles="1" Recurse="1" Grant="%DB_${NAMESPACE},%SQL" AuthenticationMethods="8192" />
+   
+  </Namespace>
+ 
     <Invoke Class="App.Installer" Method="createRESTApp">
       <Arg Value="${RESTPATH}"/>
       <Arg Value="${NAMESPACE}"/>
@@ -78,36 +89,12 @@ XData setup
 
   </If>
 
-  
-  
-  <Namespace Name="${NAMESPACE}">
-    <Import File="${SOURCESPATH}" Flags="ck" Recurse="1" IgnoreErrors="1">
-    </Import>
 
-    <Invoke Class="Form.Util.Init" Method="populateTestForms">
-    </Invoke>
-
-    <Log Text="Installing RAD superuser" Level="0"></Log>
-    <Invoke Class="dc.irisrad.data.RADUser" Method="CreateSuperUser">
-    </Invoke>
-  </Namespace>
-  
   <Log Text="Installing routinies for delegated authentication..." Level="0"></Log>
-  <Invoke Class="App.Installer" Method="EnableDelegatedAuth">
-  </Invoke>
   <Import File="${SOURCESPATH}/IRISRADAUTHENTICATE.mac" Flags="ck">
   </Import>
   <Import File="${SOURCESPATH}/ZAUTHENTICATE.mac" Flags="ck">
   </Import>
-
-  <Log Text="Creating IRIS RAD rest application..." Level="0"></Log>
-  <Invoke Class="App.Installer" Method="createRESTApp">
-    <Arg Value="/irisrad"/>
-    <Arg Value="${NAMESPACE}"/>
-    <Arg Value="dc.irisrad.rest.Main"/>
-    <Arg Value=":%DB_%DEFAULT"/>
-    <Arg Value="8192"/>
-  </Invoke>
 
   <Log Text="Modify /csp/irisapp application path..." Level="0"></Log>
   <Invoke Class="App.Installer" Method="FixAppCSPPath">
@@ -123,7 +110,6 @@ XData setup
   <Invoke Class="App.Installer" Method="GrantRolesForUnauthAcess">
     <Arg Value="${NAMESPACE}"/>
   </Invoke>
-  <Log Text="Load ZPM..." Level="0"></Log>
   
 </Manifest>
 }
