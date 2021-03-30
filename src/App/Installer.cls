@@ -15,6 +15,8 @@ XData setup
   <Default Name="RESTPATH" Value="/csp/irisapp/api" /> 
   <Default Name="REST_UNAUTH_APPNAME" Value="/irisrad/unauth" /> 
   <Default Name="InstallZPMPacks" Value="0" /> 
+  <Default Name="UseInstaller" Value="0" /> 
+
 
   <Resource Name="${RESOURCE}" Description="Resource for Message Viewer application" Permission="RW"/>
 
@@ -27,11 +29,14 @@ XData setup
       </Configuration>
     </Namespace>
   </If>
-
   <Namespace Name="${NAMESPACE}" Code="${DBNAME}" Data="${DBNAME}">
     <CSPApplication Url="${CSPURL}" Directory="${APPPATH}/csp/" ServeFiles="1" Recurse="1" Grant="%DB_${NAMESPACE},%SQL" AuthenticationMethods="8192" />
     <Import File="${SOURCESPATH}/cls" Recurse="1"/>
   </Namespace>
+  
+  <Invoke Class="App.Installer" Method="LoadZPM">
+  <Arg Value="${NAMESPACE}"/>
+  </Invoke>
 
   <If Condition='(${InstallZPMPacks}=1)'>
     <Invoke Class="App.Installer" Method="InstallZPM">
@@ -50,12 +55,14 @@ XData setup
     </Invoke>
   </If>
 
-  <Invoke Class="App.Installer" Method="createRESTApp">
-    <Arg Value="${RESTPATH}"/>
-    <Arg Value="${NAMESPACE}"/>
-  </Invoke>
+  <If Condition='(${UseInstaller}=1)'>
+  
+    <Invoke Class="App.Installer" Method="createRESTApp">
+      <Arg Value="${RESTPATH}"/>
+      <Arg Value="${NAMESPACE}"/>
+    </Invoke>
 
-  <Invoke Class="App.Installer" Method="createRESTApp">
+    <Invoke Class="App.Installer" Method="createRESTApp">
     <Arg Value="${REST_UNAUTH_APPNAME}"/>
     <Arg Value="${NAMESPACE}"/>
     <Arg Value="dc.irisrad.rest.UnAuth"/>
@@ -68,6 +75,11 @@ XData setup
     <Arg Value="${NAMESPACE}"/>
   </Invoke>
 
+
+  </If>
+
+  
+  
   <Namespace Name="${NAMESPACE}">
     <Import File="${SOURCESPATH}" Flags="ck" Recurse="1" IgnoreErrors="1">
     </Import>
@@ -111,6 +123,8 @@ XData setup
   <Invoke Class="App.Installer" Method="GrantRolesForUnauthAcess">
     <Arg Value="${NAMESPACE}"/>
   </Invoke>
+  <Log Text="Load ZPM..." Level="0"></Log>
+  
 </Manifest>
 }
 
@@ -123,8 +137,29 @@ ClassMethod setup(ByRef pVars, pLogLevel As %Integer = 3, pInstaller As %Install
 ClassMethod InstallFromDockerfile() As %Status
 {
   Set sc = $$$OK
-  Set pVars("InstallZPMPacks") = 1
+  Set pVars("InstallZPMPacks") = 0
   Set sc = ##class(App.Installer).setup(.pVars)
+  Return sc
+}
+
+/// Description
+ClassMethod LoadZPM(pNamespace As %String = "") As %Status
+{
+  zw pNamespace
+  Set sc = $$$OK
+  Set originalNS = $NAMESPACE
+  Try {
+    If (pNamespace '= "") {
+      New $NAMESPACE
+      Set $NAMESPACE = pNamespace
+    }
+    zpm "load /opt/irisapp/ -v"
+  }
+  Catch ex {
+    Set sc=ex.AsStatus()
+  }
+  zw sc
+  Set $NAMESPACE = originalNS
   Return sc
 }
 
