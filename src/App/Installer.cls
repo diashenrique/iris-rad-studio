@@ -310,10 +310,17 @@ ClassMethod EnableCSPApp(pCSPApp As %String, pNamespace As %String = "") As %Sta
 ClassMethod EnableDelegatedAuth() As %Status
 {
   Set sc = $$$OK
-  set sc = ##Class(Security.System).Get("SYSTEM",.Properties)
-  zw sc
-  set Properties("AutheEnabled") = $ZB(Properties("AutheEnabled"), 8192, 7)
-  set sc = ##Class(Security.System).Modify("SYSTEM",.Properties)
+  Set originalNS = $NAMESPACE
+  Try {
+    Set $NAMESPACE = "%SYS"
+    set sc = ##Class(Security.System).Get("SYSTEM",.Properties)
+    set Properties("AutheEnabled") = $ZB(Properties("AutheEnabled"), 8192, 7)
+    set sc = ##Class(Security.System).Modify("SYSTEM",.Properties)
+  }
+  Catch ex {
+    Set sc=ex.AsStatus()
+  }
+  Set $NAMESPACE = originalNS
   Return sc
 }
 
