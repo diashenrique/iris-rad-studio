@@ -3,7 +3,7 @@
   <Document name="iris-rad-studio.ZPM">
     <Module>
       <Name>iris-rad-studio</Name>
-      <Version>1.1.4</Version>
+      <Version>1.1.5</Version>
       <Description>IRIS RAD Studio it's a low-code solution that came to make the developer's life easier</Description>
       <Keywords>rad,crud,low-code,iris,docker</Keywords>
       <Packaging>module</Packaging>
@@ -42,6 +42,7 @@
         Url="/irisrad" 
         UseSessionCookie="1"/>    
       <SourcesRoot>src</SourcesRoot>
+      <Resource Name="App.PKG"/>
       <Resource Name="User.PKG"/>
       <Resource Name="dc.irisrad.PKG"/>
       <Invoke Class="Form.Util.Init" Method="populateTestForms">
@@ -49,7 +50,6 @@
       <Log Text="Installing RAD superuser" Level="0"></Log>
       <Invoke Class="dc.irisrad.data.RADUser" Method="CreateSuperUser"></Invoke>
       <Invoke Class="App.Installer" Method="EnableDelegatedAuth"></Invoke>
-  
     </Module>
   </Document>
 </Export>
