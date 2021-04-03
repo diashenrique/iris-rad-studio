@@ -16,7 +16,6 @@
     "links": {
       "Portal": "http://localhost:${port}/csp/sys/%25CSP.Portal.Home.zen?$NAMESPACE=%25SYS",
       "RAD": "http://localhost:${port}/csp/rad/login.html"
-      
     }
   }
 
