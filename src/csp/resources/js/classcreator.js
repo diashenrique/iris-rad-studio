@@ -201,10 +201,12 @@ $(document).ready(function () {
       allowDeleting: true
     },
     columns: [{
-        dataField: "FieldName"
+        dataField: "FieldName",
+        width: 200
       },
       {
-        dataField: "DisplayName"
+        dataField: "DisplayName",
+        width: 200
       },
       {
         dataField: "FieldType",
@@ -220,10 +222,16 @@ $(document).ready(function () {
         caption: "Is Required?",
         dataType: "boolean",
         value: false,
+      },
+      {
+        dataField: "ClassRelated",
+        width: 300,
+        lookup: {
+          dataSource: storeSelectBoxRelatedClass,
+          displayExpr: "name",
+          valueExpr: "id"
+        }
       }
-      /*,{
-        dataField: "ClassRelated"
-      }*/
     ],
     onEditorPrepared: function (options) {
       if (options.parentType === "dataRow" && options.dataField === "FieldType") {
@@ -232,6 +240,17 @@ $(document).ready(function () {
     }
   }).dxDataGrid("instance");
 });
+
+var storeSelectBoxRelatedClass = {
+  store: new DevExpress.data.CustomStore({
+    key: "id",
+    loadMode: "raw",
+    load: function () {
+      return $.getJSON(`${urlREST}/class/relatedclass/lookup`)
+    }
+  }),
+  sort: "name"
+}
 
 var form = $("#formClassCreator").dxForm({
   //formData: "",
@@ -359,5 +378,9 @@ var fieldTypeSelectBox = [{
   {
     "id": "%Library.VarString",
     "name": "%Library.VarString"
+  },
+  {
+    "id": "Related",
+    "name": "Related"
   }
 ]

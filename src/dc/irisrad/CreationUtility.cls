@@ -302,7 +302,7 @@ ClassMethod CreateField() As %Status
     Set objClassField.FieldType = obj.FieldType
     Set objClassField.IsRequired = obj.IsRequired
     Set objClassField.DisplayName = obj.DisplayName
-    //Set objClassField.ClassRelated = obj.ClassRelated
+    Set objClassField.ClassRelated = obj.ClassRelated
     Set tSC = objClassField.%Save()
 
     if $$$ISOK(tSC) {
@@ -314,6 +314,7 @@ ClassMethod CreateField() As %Status
         do jsonResponse.%Set("FieldType",obj.FieldType)
         do jsonResponse.%Set("IsRequired",obj.IsRequired)
         do jsonResponse.%Set("DisplayName",obj.DisplayName)
+        do jsonResponse.%Set("ClassRelated",obj.ClassRelated)
         do arrResponse.%Push(jsonResponse)
 
         write arrResponse.%ToJSON()
@@ -371,7 +372,7 @@ ClassMethod CompileClass(pId) As %Status
         Try {
             Set oRS = ##class(%SQL.Statement).%New()
             
-            Set sql = "SELECT ID, ClassRelated, DisplayName, FieldName, FieldType, IsRequired "_
+            Set sql = "SELECT ID, ClassRelated, DisplayName, FieldName, FieldType, IsRequired, ClassRelated "_
                       "FROM dc_irisrad_data.ClassLineCreation WHERE ParentClass = "_pId
             
             Set sc = oRS.%Prepare(sql)
@@ -388,7 +389,13 @@ ClassMethod CompileClass(pId) As %Status
                     }
                     do jsonFields.%Set("name",result.FieldName)
                     do jsonFields.%Set("displayName",result.DisplayName)
-                    do jsonFields.%Set("type",result.FieldType)
+                    if (result.ClassRelated = ""){
+                        do jsonFields.%Set("type",result.FieldType)
+                    } else {
+                        do jsonFields.%Set("type",result.ClassRelated)
+                        do jsonFields.%Set("jsonInclude","INOUT")
+                        do jsonFields.%Set("jsonReference","ID")
+                    }
                     if (result.IsRequired = 1) {
                         set tIsRequired = "true"
                     } else {
