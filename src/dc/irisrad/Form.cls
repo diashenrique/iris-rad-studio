@@ -5,6 +5,8 @@ Property Form As %Persistent;
 
 Property Name As %String [ Required ];
 
+Property ExtendsDef As %String;
+
 Property DisplayFormName As %String [ Required ];
 
 Property DisplayField As %String [ Required ];
@@ -13,7 +15,7 @@ Property Fields As %DynamicArray [ Required ];
 
 Property ObjPermissions As %String [ InitialExpression = "CRUD", Required ];
 
-Method Save() As %Status
+Method Save(pCompile As %Boolean = 1) As %Status
 {
   Set sc = $$$OK
   Try {
@@ -52,13 +54,18 @@ Method Save() As %Status
       Set collection = ..GetProperty(propDef, "collection", "")
       Set displayName = ..GetProperty(propDef, "displayName", "")
       Set required = ..GetProperty(propDef, "required", 0)
+      Set relationship = ..GetProperty(propDef, "relationship", "")
+      Set cardinality = ..GetProperty(propDef, "cardinality", "")
+      Set inverse = ..GetProperty(propDef, "inverse", "")
       Set jsonInclude = ..GetProperty(propDef, "jsonInclude", "INOUT")
       Set jsonReference = ..GetProperty(propDef, "jsonReference", "ID")
-      $$$TOE(sc, ##class(Form.Property).addClassProperty(class, name, type, collection, displayName, required, jsonInclude, jsonReference))
+      $$$TOE(sc, ##class(Form.Property).addClassPropertyNoCompile(class, name, type, collection, displayName, required, jsonInclude, jsonReference, relationship, cardinality, inverse))
     }
 
-    // form compiling
-    $$$TOE(sc, $SYSTEM.OBJ.Compile(..Name, "-d"))
+    // form compilation
+    If (pCompile) {
+      $$$TOE(sc, $SYSTEM.OBJ.Compile(..Name, "-d"))
+    }
   }
   Catch ex {
     Set sc = ex.AsStatus()
@@ -82,7 +89,11 @@ Method CreateFormClass() As %Persistent
     Set classObj = ##class(%Dictionary.ClassDefinition).%New()
   }
   Set classObj.Name = className
-  Set classObj.Super = "%Persistent, dc.irisrad.FormAdaptor"
+  Set extendsDef = "%Persistent,dc.irisrad.FormAdaptor"
+  If (..ExtendsDef '= "") {
+    Set extendsDef = extendsDef_","_..ExtendsDef
+  }
+  Set classObj.Super = extendsDef
   Return classObj
 }
 
