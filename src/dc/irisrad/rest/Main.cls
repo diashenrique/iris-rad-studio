@@ -23,8 +23,9 @@ XData UrlMap [ XMLNamespace = "http://www.intersystems.com/urlmap" ]
 <Route Url="/apps/:appName" Method="DELETE" Call="DeleteApp"/>
 
 <!-- Routes for dynamic form creation/deletion -->
-<Route Url="/form" Method="POST" Call="CreateForm"/>
+<Route Url="/form" Method="POST" Call="CreateForms"/>
 <Route Url="/form/:form" Method="DELETE" Call="DeleteForm"/>
+<Route Url="/form/package/:package" Method="DELETE" Call="DeleteFormPackage"/>
 
 <!-- todo: evaluate if this will be implemented -->
 <!-- Overrided due UI customizations features -->
@@ -123,18 +124,21 @@ ClassMethod DoLogout() As %Status
   }
 }
 
-ClassMethod CreateForm() As %Status
+ClassMethod CreateForms() As %Status
 {
   Set sc = $$$OK
   Try {
-    Set body = {}.%FromJSON(%request.Content)
-    Set form = ##class(dc.irisrad.Form).%New()
-    Set form.Name = body.name
-    Set form.DisplayFormName = body.displayFormName
-    Set form.DisplayField = body.displayProperty
-    Set form.Fields = body.fields
-    Set form.ObjPermissions = body.objpermissions
-    $$$TOE(sc, form.Save())
+    Set body = [].%FromJSON(%request.Content)
+    Set iter = body.%GetIterator()
+    Set classesList = ""
+    While (iter.%GetNext(.idx, .form)) {
+      Set $LIST(classesList, * + 1) = form.name_".cls"
+      Set formObj = ..CreateForm(form)
+      $$$TOE(sc, formObj.Save(0))
+    }
+
+    Set classesList = $LISTTOSTRING(classesList)
+    $$$TOE(sc, $SYSTEM.OBJ.CompileList(classesList, "ck /nodisplay", .errorLog))
     
     /// todo: fix this
     /// ugly hack for jQuery Ajax error
@@ -144,6 +148,18 @@ ClassMethod CreateForm() As %Status
     Set sc = ex.AsStatus()
   }
   Return sc
+}
+
+ClassMethod CreateForm(pFormObj As %DynamicObject) As dc.irisrad.Form
+{
+  Set form = ##class(dc.irisrad.Form).%New()
+  Set form.Name = pFormObj.name
+  Set form.ExtendsDef = pFormObj.extends
+  Set form.DisplayFormName = pFormObj.displayFormName
+  Set form.DisplayField = pFormObj.displayProperty
+  Set form.Fields = pFormObj.fields
+  Set form.ObjPermissions = pFormObj.objpermissions
+  Return form
 }
 
 ClassMethod DeleteForm(pFormName As %String) As %Status
@@ -159,6 +175,28 @@ ClassMethod DeleteForm(pFormName As %String) As %Status
     }
 
     $$$TOE(sc, ##class(%Dictionary.ClassDefinition).%DeleteId(pFormName))
+    
+    /// todo: fix this
+    /// ugly hack for jQuery Ajax error
+    Write 1
+  }
+  Catch ex {
+    Set sc = ex.AsStatus()
+  }
+  Return sc
+}
+
+ClassMethod DeleteFormPackage(pPackageName As %String) As %Status
+{
+  Set sc = $$$OK
+  Try {
+    $$$TOE(sc, $SYSTEM.OBJ.GetPackageList(.forms, pPackageName))
+    //zw pPackageName,forms
+    Set form = $ORDER(forms(""))
+    While (form '= "") {
+      $$$TOE(sc, ##class(%Dictionary.ClassDefinition).%DeleteId(form))
+      Set form = $ORDER(forms(form))
+    }
     
     /// todo: fix this
     /// ugly hack for jQuery Ajax error
