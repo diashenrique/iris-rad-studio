@@ -236,7 +236,11 @@ var createDefaultCRUDForm = function () {
 
         if (!queryName) {
           dataGridConfig.editing = {
-            mode: "form",
+            mode: "popup",
+            popup: {
+              title: `${formDescription}`,
+              showTitle: true
+            },
             allowAdding: true,
             allowUpdating: true,
             allowDeleting: true
