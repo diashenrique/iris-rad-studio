@@ -3,7 +3,7 @@
   <Document name="iris-rad-studio.ZPM">
     <Module>
       <Name>iris-rad-studio</Name>
-      <Version>1.1.8</Version>
+      <Version>1.1.9</Version>
       <Description>IRIS RAD Studio it's a low-code solution that came to make the developer's life easier</Description>
       <Keywords>rad,crud,low-code,iris,docker</Keywords>
       <Packaging>module</Packaging>

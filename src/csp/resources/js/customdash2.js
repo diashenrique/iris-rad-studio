@@ -47,6 +47,10 @@ var createFormSelector = () =>
     },
     complete: (resp) => {
       var forms = resp.responseJSON;
+      forms.sort(function (a, b) {
+        return a.name > b.name;
+      });
+      console.log("forms", forms);
       // creation of submenus for forms
       $('#menu-forms').html(forms.map(form => {
         return `
@@ -56,6 +60,26 @@ var createFormSelector = () =>
       }))
       if (!formName) {
         // creation of items on main widget
+
+        $("#form-selector").dxList({
+          dataSource: forms,
+          height: 600,
+          searchEnabled: true,
+          searchExpr: "name",
+          //allowItemDeleting: true,
+          //itemDeleteMode: "toggle",
+          itemTemplate: function (data) {
+            return $("<div>")
+              .append($("<div style='font-weight:bold;font-size:16px'>").text(data.name))
+              .append($("<div>").text(data.class))
+          },
+          onItemClick: (dxEvt) => {
+            window.location.href = `${window.location.href}?formName=${dxEvt.itemData.class}`;
+          }
+        }).dxList("instance");
+
+
+        /* 
         $("#form-selector").dxTileView({
           items: forms,
           direction: "vertical",
@@ -84,6 +108,7 @@ var createFormSelector = () =>
             }
           }
         });
+        */
       }
     }
   });
@@ -277,12 +302,12 @@ var createFormField = (rf2Field) => {
 
   // Password field
   if (rf2Field.type === FieldType.Password) {
-    objCol.customizeText = function(e){
-      return '*****';
-    },
-    objCol.editorOptions = {
-      mode: 'password'
-    }
+    objCol.customizeText = function (e) {
+        return '*****';
+      },
+      objCol.editorOptions = {
+        mode: 'password'
+      }
   }
 
   // Multiple Form selection field
