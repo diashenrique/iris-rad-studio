@@ -30,7 +30,10 @@ $(document).ready(function () {
   createFormSelector();
   if (formName) {
     $("#divFormName").text(` ${formName}`);
+    $("#divClassName").text(` ${qs.formName}`);
     createDefaultCRUDForm();
+  } else {
+    $("#divClassName").text(`IRIS RAD Studio - Rapid Application Development`);
   }
 });
 
@@ -62,7 +65,7 @@ var createFormSelector = () =>
         // #15 Change the "trash field" to forms field - done
         $("#form-selector").dxList({
           dataSource: forms,
-          height: 600,
+          height: 550,
           searchEnabled: true,
           searchExpr: "name",
           allowItemDeleting: true,
