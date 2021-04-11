@@ -52,6 +52,9 @@ XData UrlMap [ XMLNamespace = "http://www.intersystems.com/urlmap" ]
 <Route Url="/form/class/fields/:id" Method="DELETE" Call="dc.irisrad.CreationUtility:DeleteField" />
 <Route Url="/form/class/compile/:id" Method="POST" Call="dc.irisrad.CreationUtility:CompileClass" />
 
+<!-- <Route Url="/swagger" Method="GET" Call="GetSwagger"/>
+<Route Url="/_spec" Method="GET" Call="GetSwagger"/> -->
+
 <!-- Original Form.REST.Main redirections -->
 <Map Prefix="/form" Forward="Form.REST.Form"/>
 
@@ -124,6 +127,7 @@ ClassMethod DoLogout() As %Status
   }
 }
 
+/// Creates forms based on an array of form definitions
 ClassMethod CreateForms() As %Status
 {
   Set sc = $$$OK
@@ -162,6 +166,7 @@ ClassMethod CreateForm(pFormObj As %DynamicObject) As dc.irisrad.Form
   Return form
 }
 
+/// Deletes a form
 ClassMethod DeleteForm(pFormName As %String) As %Status
 {
   Set sc = $$$OK
@@ -335,6 +340,15 @@ ClassMethod GetApps() As %Status
   Do rs.%Next()
   Write rs.Apps
   Kill rs, stmt
+  Return sc
+}
+
+/// Get the swagger schema
+ClassMethod GetSwagger() As %Status
+{
+  Set sc = $$$OK
+  Set tSC = ##class(%REST.API).GetWebRESTApplication($NAMESPACE, "/irisrad/", .swagger)
+  Write swagger.%ToJSON()
   Return sc
 }
 
