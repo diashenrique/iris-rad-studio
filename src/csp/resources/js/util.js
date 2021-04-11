@@ -1,6 +1,16 @@
 var urlOrigin = window.location.origin;
 var restapp = "/irisrad"
 
+var ajaxGlobalLastError;
+$(document).ajaxError(function (event, jqXHR, ajaxSettings, thrownError) {
+    console.log(jqXHR.status, event, ajaxSettings, thrownError)
+    if (parseInt(jqXHR.status) >= 500) {
+        const errorMsg = jqXHR.responseJSON.errors.map(errObj => errObj.error).join();
+        ajaxGlobalLastError = errorMsg;
+        return jqXHR;
+    }
+});
+
 function sendRequest(url, method, data) {
     var d = $.Deferred();
 
@@ -26,7 +36,7 @@ function sendRequest(url, method, data) {
                 var jsonResult = {}
                 jsonResult.data = result.children;
                 d.resolve(method === "GET" ? result.children : result);
-            } catch(e) {
+            } catch (e) {
                 d.reject(e);
             }
         }
@@ -37,14 +47,14 @@ function sendRequest(url, method, data) {
 
 // Utility method to get URL query string
 function getQueryString() {
-  return window.location.search
-    .substr(1)
-    .split('&')
-    .map(item => item.split('='))
-    .reduce((acc, curr) => {
-      acc[curr[0]] = curr[1];
-      return acc;
-    }, {});
+    return window.location.search
+        .substr(1)
+        .split('&')
+        .map(item => item.split('='))
+        .reduce((acc, curr) => {
+            acc[curr[0]] = curr[1];
+            return acc;
+        }, {});
 }
 
 var NotificationEnum = {
@@ -53,8 +63,12 @@ var NotificationEnum = {
     WARNING: 'warning',
     INFO: 'info'
 }
-function notify(msg, type, duration) {
-    DevExpress.ui.notify(msg, type, duration||1500);
+
+function notify(msg, type, config) {
+    config = config || {};
+    config.message = msg;
+    config.displayTime = config.displayTime || 4000
+    DevExpress.ui.notify(config, type);
 }
 
 function getAppName() {

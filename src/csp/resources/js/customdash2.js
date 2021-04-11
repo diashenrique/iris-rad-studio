@@ -237,7 +237,15 @@ var createDefaultCRUDForm = function () {
           export: {
             enabled: true
           },
-          columns: cols
+          columns: cols,
+          onDataErrorOccurred: (e) => {
+            notify(ajaxGlobalLastError, NotificationEnum.ERROR, {
+              closeOnClick: true,
+              closeOnOutsideClick: true,
+              displayTime: 60000
+            });
+          },
+          errorRowEnabled: false
         };
 
         if (!queryName) {
