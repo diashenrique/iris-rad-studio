@@ -234,6 +234,7 @@ var createDefaultCRUDForm = function () {
             allowDeleting: true
           };
         }
+        dataGridConfig = addDefuaultGridErroHandler(dataGridConfig);
 
         $("#divRAD").dxDataGrid(dataGridConfig);
       }

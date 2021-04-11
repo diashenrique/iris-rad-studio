@@ -95,7 +95,7 @@ $(document).ready(function () {
   });
 
   var formsUrl = `${urlRESTForm}/info`;
-  $("#dataGridForms").dxDataGrid({
+  var dataGridConfig = {
     dataSource: new DevExpress.data.CustomStore({
       load: function () {
         return $.getJSON(`${formsUrl}`);
@@ -112,7 +112,9 @@ $(document).ready(function () {
     onSelectionChanged: function (selectedItems) {
       selectedForms = selectedItems.selectedRowsData;
     }
-  }).dxDataGrid("instance");
+  };
+  dataGridConfig = addDefuaultGridErroHandler(dataGridConfig);
+  $("#dataGridForms").dxDataGrid(dataGridConfig).dxDataGrid("instance");
 });
 
 var form = $("#formsSelection").dxForm({

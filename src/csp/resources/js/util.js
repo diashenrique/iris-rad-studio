@@ -11,6 +11,19 @@ $(document).ajaxError(function (event, jqXHR, ajaxSettings, thrownError) {
     }
 });
 
+function addDefuaultGridErroHandler(dataGridConfig) {
+    return Object.assign(dataGridConfig, {
+        onDataErrorOccurred: (e) => {
+            notify(ajaxGlobalLastError || e.message, NotificationEnum.ERROR, {
+                closeOnClick: true,
+                closeOnOutsideClick: true,
+                displayTime: 60000
+            });
+        },
+        errorRowEnabled: false
+    });
+}
+
 function sendRequest(url, method, data) {
     var d = $.Deferred();
 

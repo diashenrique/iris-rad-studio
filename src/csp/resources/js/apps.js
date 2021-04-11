@@ -22,7 +22,7 @@ $(document).ready(function () {
   createMenu();
   
   var appsUrl = `${urlREST}/apps`;
-  $("#dataGrid").dxDataGrid({
+  var dataGridConfig = {
     editing: {
       allowDeleting: true
     },
@@ -69,5 +69,7 @@ $(document).ready(function () {
       caption: "Description",
       dataType: "string",
     }]
-  }).dxDataGrid("instance");
+  };
+  dataGridConfig = addDefuaultGridErroHandler(dataGridConfig);
+  $("#dataGrid").dxDataGrid(dataGridConfig).dxDataGrid("instance");
 });
