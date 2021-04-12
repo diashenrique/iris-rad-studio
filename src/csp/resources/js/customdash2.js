@@ -26,6 +26,7 @@ if (formName) {
 }
 
 $(document).ready(function () {
+  $("#filter-container").toggle();
   createMenu();
   createFormSelector();
   if (formName) {
@@ -60,14 +61,46 @@ var createFormSelector = () =>
       </li>`
       }))
       if (!formName) {
+
+        var filterBuilderInstance = $("#filterBuilder").dxFilterBuilder({
+          fields: [{
+            dataField: "name"
+          }, {
+            dataField: "class"
+          }]
+        }).dxFilterBuilder("instance");
+
+        $("#apply").dxButton({
+          text: "Apply Filter",
+          type: "default",
+          onClick: function () {
+            var filter = filterBuilderInstance.getFilterExpression(),
+              dataSource = $("#form-selector").dxList("instance").getDataSource();
+            dataSource.filter(filter);
+            dataSource.load();
+          },
+        });
+        
+        $("#float-btn-filter-builder").dxSpeedDialAction({
+          label: "Filter Builder",
+          icon: "fas fa-filter",
+          index: 1,
+          onClick: function () {
+            $("#filter-container").toggle();
+          }
+        }).dxSpeedDialAction("instance");
+
         // Listing forms with searchbar on initial page 
         // #14 Ask before deleting the class - done
         // #15 Change the "trash field" to forms field - done
         $("#form-selector").dxList({
-          dataSource: forms,
-          height: 550,
+          dataSource: new DevExpress.data.DataSource({
+            store: forms,
+            filter: filterBuilderInstance.getFilterExpression()
+          }),
+          height: 500,
           searchEnabled: true,
-          searchExpr: "name",
+          searchExpr: ["name", "class"],
           allowItemDeleting: true,
           itemDeleteMode: "toggle",
           onItemDeleting: function (e) {
