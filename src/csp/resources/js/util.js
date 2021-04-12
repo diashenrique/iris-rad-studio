@@ -14,11 +14,13 @@ $(document).ajaxError(function (event, jqXHR, ajaxSettings, thrownError) {
 function addDefuaultGridErroHandler(dataGridConfig) {
     return Object.assign(dataGridConfig, {
         onDataErrorOccurred: (e) => {
-            notify(ajaxGlobalLastError || e.message, NotificationEnum.ERROR, {
-                closeOnClick: true,
-                closeOnOutsideClick: true,
-                displayTime: 60000
-            });
+            setTimeout(() => {
+                notify(ajaxGlobalLastError || e.message, NotificationEnum.ERROR, {
+                    closeOnClick: true,
+                    closeOnOutsideClick: true,
+                    displayTime: 60000
+                });
+            }, 100);
         },
         errorRowEnabled: false
     });

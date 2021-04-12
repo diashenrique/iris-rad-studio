@@ -186,7 +186,7 @@ $(document).ready(function () {
     })
   });
 
-  var dataGrid = $("#dataGridLine").dxDataGrid({
+  var dataGridConfig = {
     //dataSource: createCustomStore,
     dataSource: [],
     rowAlternationEnabled: true,
@@ -238,7 +238,9 @@ $(document).ready(function () {
         options.editorElement.dxSelectBox("instance").option("value", fieldTypeSelectBox[0].id);
       }
     }
-  }).dxDataGrid("instance");
+  };
+  // dataGridConfig = addDefuaultGridErroHandler(dataGridConfig);
+  var dataGrid = $("#dataGridLine").dxDataGrid(dataGridConfig).dxDataGrid("instance");
 });
 
 var storeSelectBoxRelatedClass = {

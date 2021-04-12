@@ -301,7 +301,6 @@ var createFormField = (rf2Field) => {
   // Single Form selection field
   if (getPropType(rf2Field) == FieldType.Form) {
     var lookupForm = rf2Field.type;
-    var fieldValue = rf2Field.name.valueOf();
     objCol.lookup = {
       dataSource: {
         store: createFormDataStore(lookupForm)
@@ -310,6 +309,18 @@ var createFormField = (rf2Field) => {
       displayExpr: "displayName"
     }
   };
+
+  // Single selection for property with valueList/displayList
+  if (rf2Field.valueList) {
+    objCol.lookup = {
+      dataSource: rf2Field.valueList.map((value, idx) => ({
+        _id: isNaN(value) ? value : parseInt(value),
+        displayName: rf2Field.displayList ? rf2Field.displayList[idx] : value
+      })),
+      valueExpr: '_id',
+      displayExpr: 'displayName'
+    }
+  }
 
   return objCol;
 }

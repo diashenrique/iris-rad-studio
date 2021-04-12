@@ -7,11 +7,13 @@ Property taskDate As %Library.TimeStamp(%JSONINCLUDE = "INOUT", %JSONREFERENCE =
 
 Property important As %Library.Boolean(%JSONINCLUDE = "INOUT", %JSONREFERENCE = "ID", DISPLAYNAME = "Important");
 
-Property completed As %Library.Boolean(%JSONINCLUDE = "INOUT", %JSONREFERENCE = "ID", DISPLAYNAME = "Completed");
+// Property completed As %Library.Boolean(%JSONINCLUDE = "INOUT", %JSONREFERENCE = "ID", DISPLAYNAME = "Completed");
+
+Property completed As %Library.Integer(%JSONINCLUDE = "INOUT", %JSONREFERENCE = "ID", DISPLAYLIST = ",No,Yes", DISPLAYNAME = "Completed", VALUELIST = ",0,1");
 
 Parameter DISPLAYPROPERTY = "text";
 
-// Parameter FORMNAME = "My tasks";
+Parameter FORMNAME = "My tasks";
 
 Parameter OBJPERMISSIONS = "CRUD";
 
