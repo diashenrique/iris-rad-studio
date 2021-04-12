@@ -43,7 +43,6 @@
         UseSessionCookie="1"/>    
       <SourcesRoot>src</SourcesRoot>
       <Resource Name="App.PKG"/>
-      <Resource Name="User.PKG"/>
       <Resource Name="dc.irisrad.PKG"/>
       <Invoke Class="Form.Util.Init" Method="populateTestForms">
       </Invoke>
