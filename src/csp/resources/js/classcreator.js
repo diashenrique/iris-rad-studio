@@ -239,7 +239,7 @@ $(document).ready(function () {
       }
     }
   };
-  // dataGridConfig = addDefuaultGridErroHandler(dataGridConfig);
+  dataGridConfig = addDefuaultGridErroHandler(dataGridConfig);
   var dataGrid = $("#dataGridLine").dxDataGrid(dataGridConfig).dxDataGrid("instance");
 });
 
