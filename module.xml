@@ -44,8 +44,6 @@
       <SourcesRoot>src</SourcesRoot>
       <Resource Name="App.PKG"/>
       <Resource Name="dc.irisrad.PKG"/>
-      <Invoke Class="Form.Util.Init" Method="populateTestForms">
-      </Invoke>
       <Log Text="Installing RAD superuser" Level="0"></Log>
       <Invoke Class="dc.irisrad.data.RADUser" Method="CreateSuperUser"></Invoke>
       <Invoke Class="App.Installer" Method="EnableDelegatedAuth"></Invoke>

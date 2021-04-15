@@ -96,13 +96,6 @@ XData setup
       <Arg Value="64"/>
     </Invoke>
 
-    <!-- remove forms not used -->
-    <Invoke Class="dc.irisrad.Installer" Method="RemoveForms">
-      <Arg Value="Form.Test.Company"/>
-      <Arg Value="Form.Test.Person"/>
-      <Arg Value="Form.Test.Simple"/>
-    </Invoke>
-
     <!-- install forms of the new app -->
     <Import File="${NEW_APP_FORMS_PATH}" Flags="c">
     </Import>
