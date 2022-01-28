@@ -29,3 +29,4 @@ SHELL ["/bin/bash", "-c"]
 USER root
 RUN chown -R irisuser:irisuser /opt
 # RUN chown -R irisuser:irisuser /usr/irissys/csp/forms
+USER ${ISC_PACKAGE_MGRUSER}
