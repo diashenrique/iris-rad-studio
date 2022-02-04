@@ -4,6 +4,7 @@ ARG IMAGE=intersystemsdc/iris-community:2020.2.0.204.0-zpm
 # ARG IMAGE=store/intersystems/iris-community-arm64:2020.3.0.221.0
 #Replaced with below image to fix Error: Invalid Community Edition license
 ARG IMAGE=intersystemsdc/iris-community:2021.1.0.215.3-zpm
+
 FROM $IMAGE
 
 USER root
@@ -34,3 +35,4 @@ SHELL ["/bin/bash", "-c"]
 USER root
 RUN chown -R irisuser:irisuser /opt
 # RUN chown -R irisuser:irisuser /usr/irissys/csp/forms
+USER ${ISC_PACKAGE_MGRUSER}
