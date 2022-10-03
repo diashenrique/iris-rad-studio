@@ -31,7 +31,7 @@ Open in the URL in browser: [http://localhost:52773/csp/irisapp/login.html](http
 
 ### If you want to test the app without installing anything
 
-[https://irisrad.contest.community.intersystems.com/csp/irisapp/login.html](https://irisrad.contest.community.intersystems.com/csp/irisapp/login.html)
+[https://irisrad.contest.community.intersystems.com/csp/rad/login.html](https://irisrad.contest.community.intersystems.com/csp/rad/login.html)
 
 Login with _SYSTEM user
 
