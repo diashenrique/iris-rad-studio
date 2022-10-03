@@ -34,6 +34,6 @@ RUN \
 SHELL ["/bin/bash", "-c"]
 
 USER root
-RUN chown -R ${ISC_PACKAGE_MGRUSER}:${ISC_PACKAGE_IRISGROUP} /opt /opt
+RUN chown -R ${ISC_PACKAGE_MGRUSER}:${ISC_PACKAGE_IRISGROUP} /opt
 # RUN chown -R irisuser:irisuser /usr/irissys/csp/forms
 USER ${ISC_PACKAGE_MGRUSER}
