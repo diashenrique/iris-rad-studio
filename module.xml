@@ -10,7 +10,7 @@
       <Dependencies>
         <ModuleReference>
           <Name>dsw</Name>
-          <Version>3.*</Version>
+          <Version>4.*</Version>
         </ModuleReference>
         <ModuleReference>
           <Name>AnalyzeThis</Name>
